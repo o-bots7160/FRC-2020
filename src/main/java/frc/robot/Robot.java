@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot {
   private final Hopper hopper            = new Hopper        ( m_timer );
   private final Shooter shooter          = new Shooter       ( m_timer );
   private final Spinner spinner          = new Spinner       ( m_timer );
+  private String targetColor             = "Unknown";
 
   enum autonomousStep {
     STEP_1,  // Move forward 90 feet
@@ -36,7 +38,7 @@ public class Robot extends TimedRobot {
     STEP_3,  // move forward 5 feet
     STEP_4,  // rotate 90 degrees to shoot balls
     STEP_5,  // align shot
-    STEP_6,   // shoot 3 balls
+    STEP_6,  // shoot 3 balls
     STEP_7
   }
     private autonomousStep step = autonomousStep.STEP_1;
@@ -159,20 +161,44 @@ public class Robot extends TimedRobot {
     m_drive  .teleopInit();
   }
 
-  /*
-   *
-   * This function is called periodically during teleoperated mode.
-   */
-  @Override
-  public void teleopPeriodic() {
-    collector.teleopPeriodic();
-    crane    .teleopPeriodic();
-    hopper   .teleopPeriodic();
-    shooter  .teleopPeriodic();
-    spinner  .teleopPeriodic();
-    m_drive  .teleopPeriodic();
+    /*
+    *
+    * This function is called periodically during teleoperated mode.
+    */
+    @Override
+    public void teleopPeriodic() {
+        collector.teleopPeriodic();
+        crane    .teleopPeriodic();
+        hopper   .teleopPeriodic();
+        shooter  .teleopPeriodic();
+        spinner  .teleopPeriodic();
+        m_drive  .teleopPeriodic();
 
-    m_drive.arcadeDrive(m_stick.getY(), m_stick.getX());
+        m_drive.arcadeDrive(m_stick.getY(), m_stick.getX());
+        String gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+        if(gameData.length() > 0)
+        {
+          switch (gameData.charAt(0))
+          {
+            case 'B' :
+                targetColor = "Blue";
+                break;
+            case 'G' :
+                targetColor = "Green";
+                break;
+            case 'R' :
+                targetColor = "Red";
+                break;
+            case 'Y' :
+                targetColor = "Yellow";
+                break;
+            default :
+                targetColor = "Unknown";
+                break;
+          }
+        }
+      
   }
   /*
    *

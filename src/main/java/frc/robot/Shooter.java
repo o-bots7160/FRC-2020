@@ -1,12 +1,17 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 class Shooter {
     private final Timer m_timer;
     private int rpm = 0;
     private int target = 0;
     private double last;
+    private final double kP            = 0.5d;
+    private final double kI            = 0.0d;
+    private final double kD            = 0.0d;
+    private final PIDController rpmPID = new PIDController(kP, kI, kD);
     /*
      *
      * This function is called periodically during test mode.
@@ -103,6 +108,8 @@ class Shooter {
      */
     public void set(int rpm){
         target = rpm;
+        rpmPID.reset      (       );
+        rpmPID.setSetpoint( rpm );
     }
     /*
      *
