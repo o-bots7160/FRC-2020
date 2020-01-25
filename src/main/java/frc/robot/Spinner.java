@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 class Spinner {
+
+    private enum SpinnerModes { SPINNER_IDLE, SPINNER_ROTATE, SPINNER_SELECT };
+
     private final Timer m_timer;
  
-    private final I2C.Port      i2cPort           = I2C.Port.kOnboard;
-    private final WPI_TalonSRX  _colrWheel        = new WPI_TalonSRX(30);
+    private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
+    private final WPI_TalonSRX  _colrWheel     = new WPI_TalonSRX(RobotMap._colrWhelID);
  
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
@@ -23,12 +26,13 @@ class Spinner {
     private final Color kRedTarget    = ColorMatch.makeColor(0.561, 0.232, 0.114);
     private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-    private boolean colorDone    = false;
-    private String  colorCurrent = "Unknown";
-    private String  colorStart   = "Unknown";
-    private String  colorLast    = "Unknown";
+    private ColorState  colorCurrent = ColorState.UKNOWN;
+    private ColorState  colorStart   = ColorState.UKNOWN;
+    private ColorState  colorLast    = ColorState.UKNOWN;
     private int     colorCount   = 0;
-    private int     colorMode    = 0;
+    SpinnerModes     spinnerMode    = SpinnerModes.SPINNER_IDLE;
+    private int     changeCount  = 0;
+
 
     /*
      *
@@ -56,29 +60,46 @@ class Spinner {
      */
     public void robotPeriodic() {
         final Color detectedColor = m_colorSensor.getColor();
+        ColorState tempColor = ColorState.UKNOWN;
 
         /**
          * Run the color match algorithm on our detected color
          */
         final ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
     
-        if (match.color == kBlueTarget) {
-            colorCurrent = "Blue";
-        } else if (match.color == kRedTarget) {
-            colorCurrent = "Red";
-        } else if (match.color == kGreenTarget) {
-            colorCurrent = "Green";
-        } else if (match.color == kYellowTarget) {
-            colorCurrent = "Yellow";
+        if ( match.color == kBlueTarget ) {
+            tempColor = ColorState.BLUE;
+        } else if ( match.color == kRedTarget ) {
+            tempColor = ColorState.RED;
+        } else if ( match.color == kGreenTarget ) {
+            tempColor = ColorState.GREEN;
+        } else if ( match.color == kYellowTarget ) {
+            tempColor = ColorState.YELLOW;
         } else {
-            colorCurrent = "Unknown";          
+            tempColor = ColorState.UKNOWN;          
+        }
+        //
+        //  See if we want to say the color changed
+        //
+        //
+        if ( tempColor != ColorState.UKNOWN )
+        {
+            if ( tempColor != colorCurrent ) {
+                changeCount++;
+                if ( changeCount > 8 ) {
+                    colorCurrent = tempColor;
+                    changeCount  = 0;
+                }
+            } else {
+                changeCount = 0;
+            }
         }
         /**
          * Open Smart Dashboard or Shuffleboard to see the color detected by the 
          * sensor.
          */
         SmartDashboard.putNumber("Confidence", match.confidence);
-        SmartDashboard.putString("Detected Color", colorCurrent);
+        SmartDashboard.putString("Detected Color", colorCurrent.toString());
     }
     /*
      *
@@ -105,47 +126,55 @@ class Spinner {
      * This function is called periodically during teleoperated mode.
      */
     public void teleopPeriodic() {
-        if ( colorMode == 1 )
-        {
-            //
-            // Has The color changed?
-            //
-            //
-            if ( ( colorLast != colorCurrent ) && ( colorCurrent != "Unknown" ) )
-            {
+
+        switch (spinnerMode) {
+            case SPINNER_IDLE:
+                // Nothing to see here
+                break;
+        
+            case SPINNER_ROTATE:
                 //
                 // Has The color changed?
                 //
                 //
-                if ( colorCurrent == colorStart )
+                if ( colorLast != colorCurrent )
                 {
-                    colorCount++;
-                    /*
-                    *
-                    * Have we counted it enough times?
-                    */
-                    if ( colorCount >= 8 )
+                    colorLast = colorCurrent;
+                    //
+                    // Have we reached the starting color again?
+                    //
+                    //
+                    if ( colorCurrent == colorStart )
                     {
-                        colorDone = true;
-                        colorMode = 0;
-                        _colrWheel.set( 0.0 ); // Done!
+                        colorCount++;
+                        //
+                        //  Have we counted the starting color enough times?
+                        //
+                        //
+                        if ( colorCount >= 8 )
+                        {
+                            spinnerMode = SpinnerModes.SPINNER_IDLE;
+                            _colrWheel.set( 0.0 ); // Done!
+                        }
                     }
                 }
-            }
-            colorLast = colorCurrent;
-        }
-        else if ( colorMode == 2 )
-        {
-            /*
-            *
-            * Did we get the color we wanted?
-            */
-            if ( colorCurrent == colorLast )
-            {
-                colorDone = true;
-                colorMode = 0;
-                _colrWheel.set( 0.0 ); // Done!
-            }
+                else
+                {
+                    changeCount = 0;
+                }
+                break;
+
+            case SPINNER_SELECT:
+                /*
+                *
+                * Did we get the color we wanted?
+                */
+                if ( colorCurrent == colorLast )
+                {
+                    spinnerMode = SpinnerModes.SPINNER_IDLE;
+                    _colrWheel.set( 0.0 ); // Done!
+                }
+                break;
         }
     }
     /*
@@ -171,33 +200,33 @@ class Spinner {
      * This function rotates the spinner 4 times.
      */
     public void rotate(){
-        colorStart = colorCurrent;
-        colorLast  = colorCurrent;
-        colorCount = 0;
-        colorDone  = false;
-        colorMode  = 1;
+        colorStart  = colorCurrent; // TODO: should we check if it is currently "Unknown"?
+        colorLast   = colorCurrent;
+        colorCount  = 0;
+        spinnerMode   = SpinnerModes.SPINNER_ROTATE;
+        changeCount = 0;
         _colrWheel.set(0.20);
     }
     /*
      *
      * This function positions the spinner to a particular color.
      */
-    public void select( final String target) {
-        colorStart = target;
-        colorDone  = false;
-        colorMode  = 2;
+    public void select( final ColorState target) {
+        colorStart  = target;
+        spinnerMode   = SpinnerModes.SPINNER_SELECT;
+        changeCount = 0;
         _colrWheel.set(0.20);
     }
     /*
      *
      * Returns true if done selecting color
      */
-    public boolean doneSelecting()
+    public boolean done()
     {
-        if ( colorMode == 2 )
+        if ( spinnerMode == SpinnerModes.SPINNER_IDLE )
         {
-            return colorDone;
+            return false;
         }
-        return false;
+        return true;
     }
-  }
+}

@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 class Shooter {
+    
+
     private final Timer m_timer;
     private int rpm = 0;
     private int target = 0;

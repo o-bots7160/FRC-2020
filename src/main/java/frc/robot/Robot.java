@@ -30,7 +30,9 @@ public class Robot extends TimedRobot {
   private final Hopper hopper            = new Hopper        ( m_timer );
   private final Shooter shooter          = new Shooter       ( m_timer );
   private final Spinner spinner          = new Spinner       ( m_timer );
-  private String targetColor             = "Unknown";
+  private ColorState targetColor             = ColorState.UKNOWN;
+
+  public ColorState color;
 
   enum autonomousStep {
     STEP_1,  // Move forward 90 feet
@@ -182,19 +184,19 @@ public class Robot extends TimedRobot {
           switch (gameData.charAt(0))
           {
             case 'B' :
-                targetColor = "Blue";
+                targetColor = ColorState.BLUE;
                 break;
             case 'G' :
-                targetColor = "Green";
+                targetColor = ColorState.GREEN;
                 break;
             case 'R' :
-                targetColor = "Red";
+                targetColor = ColorState.RED;
                 break;
             case 'Y' :
-                targetColor = "Yellow";
+                targetColor = ColorState.YELLOW;
                 break;
             default :
-                targetColor = "Unknown";
+                targetColor = ColorState.UKNOWN;
                 break;
           }
         }

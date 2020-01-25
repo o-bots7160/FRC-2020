@@ -8,25 +8,25 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 class WestCoastDrive {
-    private final double TICKS_PER_FOOT = 1000.0d;
-    private final double kP             = 0.5d;
-    private final double kI             = 0.0d;
-    private final double kD             = 0.0d;
-    private double currentLocation      = 0.0d;
-    private double currentAngle         = 0.0d;
-    private double startLocation        = 0.0d;
-    private double autonomousLocation   = 0.0d;
-    private double autonomousAngle      = 0.0d;
+    private final double TICKS_PER_FOOT                = 1000.0d;
+    private final double kP                            = 0.5d;
+    private final double kI                            = 0.0d;
+    private final double kD                            = 0.0d;
+    private double currentLocation                     = 0.0d;
+    private double currentAngle                        = 0.0d;
+    private double startLocation                       = 0.0d;
+    private double autonomousLocation                  = 0.0d;
+    private double autonomousAngle                     = 0.0d;
     private final Timer m_timer;
 
-    private final ADXRS450_Gyro gyro     = new ADXRS450_Gyro( );
-    private final PIDController anglePID = new PIDController(kP, kI, kD);
-    WPI_TalonSRX _rghtMain               = new WPI_TalonSRX(10);
-    WPI_TalonSRX _rghtFol1               = new WPI_TalonSRX(11);
-    WPI_TalonSRX _rghtFol2               = new WPI_TalonSRX(12);
-    WPI_TalonSRX _leftMain               = new WPI_TalonSRX(20);
-    WPI_TalonSRX _leftFol1               = new WPI_TalonSRX(21);
-    WPI_TalonSRX _leftFol2               = new WPI_TalonSRX(22);
+    private final ADXRS450_Gyro gyro                   = new ADXRS450_Gyro( );
+    private final PIDController anglePID               = new PIDController(kP, kI, kD);
+    private final WPI_TalonSRX _rghtMain               = new WPI_TalonSRX(RobotMap._rghtMainID);
+    private final WPI_TalonSRX _rghtFol1               = new WPI_TalonSRX(RobotMap._rghtFol1ID);
+    private final WPI_TalonSRX _rghtFol2               = new WPI_TalonSRX(RobotMap._rghtFol2ID);
+    private final WPI_TalonSRX _leftMain               = new WPI_TalonSRX(RobotMap._leftMainID);
+    private final WPI_TalonSRX _leftFol1               = new WPI_TalonSRX(RobotMap._leftFol1ID);
+    private final WPI_TalonSRX _leftFol2               = new WPI_TalonSRX(RobotMap._leftFol2ID);
     
     DifferentialDrive m_robotDrive = new DifferentialDrive(_leftMain, _rghtMain);
 

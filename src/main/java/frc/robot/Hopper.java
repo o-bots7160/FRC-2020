@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Timer;
 
 class Hopper {
+
     private final Timer m_timer;
     /*
      *
