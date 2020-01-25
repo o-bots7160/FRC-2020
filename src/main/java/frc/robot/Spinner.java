@@ -11,21 +11,24 @@ import edu.wpi.first.wpilibj.util.Color;
 
 class Spinner {
     private final Timer m_timer;
-    WPI_TalonSRX _spinnerDrive = new WPI_TalonSRX(30);
-    private final I2C.Port i2cPort = I2C.Port.kOnboard;
-    WPI_TalonSRX _colrWheel = new WPI_TalonSRX(21);
-    private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-    private final ColorMatch m_colorMatcher = new ColorMatch();
-    private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-    private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-    private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+ 
+    private final I2C.Port      i2cPort           = I2C.Port.kOnboard;
+    private final WPI_TalonSRX  _colrWheel        = new WPI_TalonSRX(30);
+ 
+    private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
+    private final ColorMatch    m_colorMatcher = new ColorMatch();
+ 
+    private final Color kBlueTarget   = ColorMatch.makeColor(0.143, 0.427, 0.429);
+    private final Color kGreenTarget  = ColorMatch.makeColor(0.197, 0.561, 0.240);
+    private final Color kRedTarget    = ColorMatch.makeColor(0.561, 0.232, 0.114);
     private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-    private String colorCurrent = "Unknown";
-    private String colorStart = "Unknown";
-    private String colorLast  = "Unknown";
-    private int    colorCount = 0;
-    private boolean colorDone = false;
-    private int     colorMode = 0;
+
+    private boolean colorDone    = false;
+    private String  colorCurrent = "Unknown";
+    private String  colorStart   = "Unknown";
+    private String  colorLast    = "Unknown";
+    private int     colorCount   = 0;
+    private int     colorMode    = 0;
 
     /*
      *
@@ -104,16 +107,16 @@ class Spinner {
     public void teleopPeriodic() {
         if ( colorMode == 1 )
         {
-            /*
-            *
-            * Has The color changed?
-            */
-            if ( colorLast != colorCurrent )
+            //
+            // Has The color changed?
+            //
+            //
+            if ( ( colorLast != colorCurrent ) && ( colorCurrent != "Unknown" ) )
             {
-                /*
-                *
-                * Does it match the start color?
-                */
+                //
+                // Has The color changed?
+                //
+                //
                 if ( colorCurrent == colorStart )
                 {
                     colorCount++;
@@ -179,7 +182,7 @@ class Spinner {
      *
      * This function positions the spinner to a particular color.
      */
-    public void select( String target ){
+    public void select( final String target) {
         colorStart = target;
         colorDone  = false;
         colorMode  = 2;

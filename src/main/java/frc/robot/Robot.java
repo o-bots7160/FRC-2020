@@ -198,7 +198,10 @@ public class Robot extends TimedRobot {
                 break;
           }
         }
-      
+        if ( m_stick.getRawButton(1) )
+        {
+          spinner.select( targetColor );  
+        }
   }
   /*
    *
