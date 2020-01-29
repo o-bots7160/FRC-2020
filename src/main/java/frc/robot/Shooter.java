@@ -2,18 +2,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 class Shooter {
     
 
     private final Timer m_timer;
-    private int rpm = 0;
-    private int target = 0;
-    private double last;
+    private double rpm                 = 0.0d;
+    private double target              = 0.0d;
     private final double kP            = 0.5d;
     private final double kI            = 0.0d;
     private final double kD            = 0.0d;
     private final PIDController rpmPID = new PIDController(kP, kI, kD);
+    private final WPI_TalonSRX  fling  = new WPI_TalonSRX( RobotMap._shooterID );
     /*
      *
      * This function is called periodically during test mode.
@@ -27,26 +28,17 @@ class Shooter {
      * This function is called periodically during test mode.
      */
     public void robotInit() {
+        set( 0.0d );
     }
     /*
      *
      * This function is called periodically no matter the mode.
      */
     public void robotPeriodic() {
-        double current = m_timer.get();
-        double elapsed = current - last;
-        rpm = (int) (45.0d / elapsed);
-        if ( ! atSpeed() )
-        {
-            if ( target > rpm )
-            {
-                // increase motor power
-            }
-            else
-            {
-                // decrease motor power
-            }
-        }
+
+        rpm = ( fling.getSelectedSensorVelocity() * 600.0d ); // converts from X/millisec to X/minute
+        double newPwr = rpmPID.calculate( rpm );
+        fling.set( newPwr );
     }
     /*
      *
@@ -83,6 +75,7 @@ class Shooter {
      * This function is called periodically during test mode.
      */
     public void disabledInit() {
+        fling.set( 0.0d );
     }
     /*
      *
@@ -95,22 +88,22 @@ class Shooter {
      * This function starts spinning the shooter motor at an idle speed.
      */
     public void idle(){
-        set( 300 );
+        set( 300.0d );
     }
     /*
      *
      * This function shuts off the shooter motor.
      */
     public void off(){
-        // stop motor
+        set( 0.0d );
     }
     /*
      *
      * This function sets the target rpm for the shooter.
      */
-    public void set(int rpm){
+    public void set( double rpm ){
         target = rpm;
-        rpmPID.reset      (       );
+        rpmPID.reset      (     );
         rpmPID.setSetpoint( rpm );
     }
     /*

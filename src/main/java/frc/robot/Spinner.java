@@ -29,9 +29,9 @@ class Spinner {
     private ColorState  colorCurrent = ColorState.UKNOWN;
     private ColorState  colorStart   = ColorState.UKNOWN;
     private ColorState  colorLast    = ColorState.UKNOWN;
-    private int     colorCount   = 0;
-    SpinnerModes     spinnerMode    = SpinnerModes.SPINNER_IDLE;
-    private int     changeCount  = 0;
+    private int         colorCount   = 0;
+    SpinnerModes        spinnerMode  = SpinnerModes.SPINNER_IDLE;
+    private int         changeCount  = 0;
 
 
     /*
@@ -106,7 +106,7 @@ class Spinner {
      * This function is run once each time the robot enters autonomous mode.
      */
     public void autonomousInit() {
-        _colrWheel.set(0);
+        _colrWheel.set( 0.0d );
     }
     /*
      *
