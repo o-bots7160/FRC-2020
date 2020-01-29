@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
         {
           if ( shots < 2 )
           {
-            hopper.feed();
+            hopper.eject();
             shots++;
           }
           step = autonomousStep.STEP_6;
