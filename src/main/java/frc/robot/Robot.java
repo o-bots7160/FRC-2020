@@ -7,38 +7,41 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
+
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
-  @Override
-  public void robotInit() {
-  }
 
-  @Override
-  public void autonomousInit() {
-  }
+    Timer ref_Timer = new Timer();
 
-  @Override
-  public void autonomousPeriodic() {
-  }
+    WestCoastDrive _drive = new WestCoastDrive(ref_Timer);
+  
+    Joystick _joy1 = new Joystick(0);
 
-  @Override
-  public void teleopInit() {
-  }
+    @Override
+    public void robotInit() {
+    }
 
-  @Override
-  public void teleopPeriodic() {
-  }
+    @Override
+    public void autonomousInit() {
+    }
 
+    @Override
+    public void autonomousPeriodic() {
+    }
+
+    @Override
+    public void teleopInit(){
+      _drive.stop();
+
+
+    }
+  @Override
+  public void teleopPeriodic(){
+
+    
+      _drive.arcadeDrive(_joy1.getY(), _joy1.getZ());
+  }
 }
