@@ -27,11 +27,6 @@ import edu.wpi.first.wpilibj.Joystick;
  * project.
  */
 public class Limelight extends TimedRobot {
-  WPI_VictorSPX _rghtFront = new WPI_VictorSPX(10);
-  WPI_VictorSPX _rghtFollo = new WPI_VictorSPX(11);
-  WPI_TalonSRX _leftFront = new WPI_TalonSRX(20);
-  WPI_VictorSPX _leftFollo = new WPI_VictorSPX(21);
-  DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
 
   Joystick _joystick = new Joystick(0);
 
@@ -42,20 +37,8 @@ public class Limelight extends TimedRobot {
 
   @Override
   public void robotInit() {
-    _rghtFollo.configFactoryDefault();
-    _rghtFront.configFactoryDefault();
-    _leftFront.configFactoryDefault();
-    _leftFollo.configFactoryDefault();
-    _leftFollo.follow(_leftFront);
-    _rghtFollo.follow(_rghtFront);
-   /* _rghtFront.configOpenloopRamp(1,0);
-    _rghtFollo.configOpenloopRamp(1,0);
-    _leftFollo.configOpenloopRamp(1,0);
-    _leftFront.configOpenloopRamp(1,0);*/
-    _rghtFront.setNeutralMode(NeutralMode.Brake);
-    _rghtFollo.setNeutralMode(NeutralMode.Brake);
-    _leftFront.setNeutralMode(NeutralMode.Brake);
-    _leftFollo.setNeutralMode(NeutralMode.Brake);
+    
+   
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
   }
 

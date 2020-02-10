@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 /**
@@ -23,6 +24,7 @@ public class Robot extends TimedRobot {
    */
 
   BallShooter shooter = new BallShooter();
+  Joystick _joystick = new Joystick(0);
 
   @Override
   public void robotInit() {
@@ -43,7 +45,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    shooter.setRPM(3000);
 
     shooter.teleopPeriodic();
 
@@ -53,7 +54,11 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, ( _joystick.getZ() + ( horizAngle / 27.0d) ));
     } else {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
-  }*/
-
-}
+    }*/
+    if(_joystick.getRawButton(1)) {
+      shooter.setRPM( 4000 *( -1 * _joystick.getY()));
+    } else {
+      shooter.setRPM(0);
+    }
+  }    
 }
