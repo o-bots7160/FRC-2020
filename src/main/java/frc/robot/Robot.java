@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    
   }
 
   @Override
@@ -47,7 +48,12 @@ public class Robot extends TimedRobot {
     shooter.teleopPeriodic();
 
     System.out.println("Current RPM : " + shooter.getCurrentRPM());
+    
+    /*if (targetInSight) {
+      _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, ( _joystick.getZ() + ( horizAngle / 27.0d) ));
+    } else {
+      _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
+  }*/
 
-  }
-
+}
 }
