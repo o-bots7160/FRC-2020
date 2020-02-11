@@ -1,17 +1,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Joystick;
 
 
 public class Led {
-  private final Spark LEDs = new Spark(0);
-  private final Joystick joy1 = new Joystick(0);
-  private final DigitalInput limitSwitch1 = new DigitalInput(0);
- 
-  
+  private final Spark LEDs = new Spark(0); 
+
+    
   public void robotInit() {
   }
 
@@ -28,25 +24,6 @@ public class Led {
 
   
   public void teleopPeriodic() {
-    
-    if(joy1.getRawButton(3)){
-      LEDs.set(ColorMap.Rainbow);
-    }else if (joy1.getRawButton(4))  {
-      LEDs.set(ColorMap.Red);
-     }else if (joy1.getRawButton(5))  {
-        LEDs.set(ColorMap.SkyBlue);
-    }else if (joy1.getRawButton(6))  {
-      LEDs.set(ColorMap.White);
-    }else if (!limitSwitch1.get()){
-      LEDs.set(ColorMap.SkyBlue);
-    }else{
-      LEDs.set(ColorMap.ColorGradient);
-    }
-
-    if(Math.abs(joy1.getRawAxis(2)) >= 0.3){
-      
-    }
-
   }
 
   
@@ -56,5 +33,33 @@ public class Led {
   
   public void testPeriodic() {
   }
+  public void  setColor( ColorMap newColor ) {
+    switch ( newColor ) {
+      case Rainbow:
+        LEDs.set( -0.97 );
+        break;
+      case Red :
+        LEDs.set( 0.61 );
+        break;
+      case SkyBlue:
+        LEDs.set( 0.83 );
+        break;
+      case White:
+        LEDs.set( 0.93 );
+        break; 
+      case Green:
+        LEDs.set( 0.77 );
+        break; 
+      case Yellow:
+        LEDs.set( 0.69 );
+        break;
+      case ColorGradient:
+        LEDs.set( 0.41 );
+        break;
+      default:
+        LEDs.set( 0.41 );
+      break;
+  }
+}
 
 }
