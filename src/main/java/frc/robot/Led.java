@@ -2,47 +2,45 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Joystick;
 
 
-public class Robot extends TimedRobot {
+public class Led {
   private final Spark LEDs = new Spark(0);
   private final Joystick joy1 = new Joystick(0);
   private final DigitalInput limitSwitch1 = new DigitalInput(0);
  
-  @Override
+  
   public void robotInit() {
   }
 
-  @Override
+  
   public void autonomousInit() {
   }
 
-  @Override
   public void autonomousPeriodic() {
   }
 
-  @Override
+  
   public void teleopInit() {
   }
 
-  @Override
+  
   public void teleopPeriodic() {
     
     if(joy1.getRawButton(3)){
-      LEDs.set(-0.97);
+      LEDs.set(ColorMap.Rainbow);
     }else if (joy1.getRawButton(4))  {
-      LEDs.set(0.61);
+      LEDs.set(ColorMap.Red);
      }else if (joy1.getRawButton(5))  {
-        LEDs.set(0.93);
+        LEDs.set(ColorMap.SkyBlue);
     }else if (joy1.getRawButton(6))  {
-      LEDs.set(0.83);
+      LEDs.set(ColorMap.White);
     }else if (!limitSwitch1.get()){
-      LEDs.set(0.83);
+      LEDs.set(ColorMap.SkyBlue);
     }else{
-      LEDs.set(0.41);
+      LEDs.set(ColorMap.ColorGradient);
     }
 
     if(Math.abs(joy1.getRawAxis(2)) >= 0.3){
@@ -51,11 +49,11 @@ public class Robot extends TimedRobot {
 
   }
 
-  @Override
+  
   public void testInit() {
   }
 
-  @Override
+  
   public void testPeriodic() {
   }
 
