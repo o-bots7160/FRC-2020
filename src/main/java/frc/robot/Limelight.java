@@ -16,9 +16,9 @@ public class Limelight {
   private double  horizAngle;
   private double  vertAngle;
   private double  percentArea;
-  private double h1;
-  private double h2;
-  private double a1;
+  private final double h1 =  2.55d;
+  private final double h2 =  8.0d;
+  private final double a1 = 45.0d;
   public void robotInit() {
     SmartDashboard.putNumber("LimelightX", horizAngle);
     SmartDashboard.putNumber("LimelightY", vertAngle);
