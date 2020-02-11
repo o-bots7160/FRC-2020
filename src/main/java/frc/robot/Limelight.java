@@ -6,27 +6,12 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
-
-import edu.wpi.first.wpilibj.TimedRobot;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
-public class Limelight extends TimedRobot {
+public class Limelight {
 
   Joystick _joystick = new Joystick(0);
 
@@ -35,14 +20,12 @@ public class Limelight extends TimedRobot {
   double vertAngle;
   double percentArea;
 
-  @Override
   public void robotInit() {
     
    
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
   }
 
-  @Override
   public void robotPeriodic() {
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -62,15 +45,12 @@ public class Limelight extends TimedRobot {
     }
  }
 
-  @Override
   public void autonomousInit() {
   }
 
-  @Override
   public void autonomousPeriodic() {
   }
 
-  @Override
   public void teleopInit() {
 
     SmartDashboard.putNumber("LimelightX", horizAngle);
@@ -79,17 +59,13 @@ public class Limelight extends TimedRobot {
 
   }
 
-  
-  @Override
   public void teleopPeriodic() {
     
   }
 
-  @Override
   public void testInit() {
   }
 
-  @Override
   public void testPeriodic() {
   }
 

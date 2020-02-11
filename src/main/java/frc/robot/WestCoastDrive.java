@@ -72,13 +72,13 @@ class WestCoastDrive {
      * This function handles autonomous drive movement.
      */
     public void autonomousPeriodic() {
-        double velocity , rotation;
+        /*double velocity , rotation;
 
         
 
         rotation = anglePID.calculate( currentAngle );
 
-        //m_robotDrive.arcadeDrive( velocity, rotation );
+        m_robotDrive.arcadeDrive( velocity, rotation );*/
     }
     /*
      *
