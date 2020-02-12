@@ -9,21 +9,20 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
 
 public class Limelight {
 
-  Joystick _joystick = new Joystick(0);
-
-  boolean targetInSight = false;
-  double horizAngle;
-  double vertAngle;
-  double percentArea;
-
+  private boolean targetInSight = false;
+  private double  horizAngle;
+  private double  vertAngle;
+  private double  percentArea;
+  private final double h1 =  2.55d;
+  private final double h2 =  8.0d;
+  private final double a1 = 45.0d;
   public void robotInit() {
-    
-   
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+    SmartDashboard.putNumber("LimelightX", horizAngle);
+    SmartDashboard.putNumber("LimelightY", vertAngle);
+    SmartDashboard.putNumber("LimelightArea", percentArea);
   }
 
   public void robotPeriodic() {
@@ -52,11 +51,6 @@ public class Limelight {
   }
 
   public void teleopInit() {
-
-    SmartDashboard.putNumber("LimelightX", horizAngle);
-    SmartDashboard.putNumber("LimelightY", vertAngle);
-    SmartDashboard.putNumber("LimelightArea", percentArea);
-
   }
 
   public void teleopPeriodic() {
@@ -70,29 +64,18 @@ public class Limelight {
   }
 
   public boolean istargetinsight() {
-return targetInSight;
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return targetInSight;
   }
-
-
-
-
-
-
-
-
+  public double horizAngle()  {
+    return horizAngle;
+  }
+   public double vertAngle() {
+     return vertAngle;
+   }
+   public double percentArea(){
+    return percentArea;
+   }
+   public double distancetoTarget(){
+     return (h2-h1)/Math.tan(a1+vertAngle);
+   }
 }
-
-  
