@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -62,4 +63,11 @@ public class Robot extends TimedRobot {
       shooter.stop();
     }
   }    
+
+
+
+
+protected void execute() {
+  SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+}
 }
