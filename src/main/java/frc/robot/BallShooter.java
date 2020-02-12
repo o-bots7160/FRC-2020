@@ -2,21 +2,24 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 class BallShooter{
     // Shooter Motor Controllers
-    private WPI_TalonFX _shotMain = new WPI_TalonFX(RobotMap._shotMain);
-    private WPI_TalonFX _shotFoll = new WPI_TalonFX(RobotMap._shotFoll);
+    private WPI_TalonSRX _shotMain = new WPI_TalonSRX(RobotMap._shotMain);
+    private WPI_TalonSRX _shotFoll = new WPI_TalonSRX(RobotMap._shotFoll);
     // PID
-    private final double kP = 1;
-    private final double kI = 0;
+    private final double kP = 0.0004;
+    private final double kI = 0.001;
     private final double kD = 0;
     private PIDController RPMPID = new PIDController(kP, kI, kD);
 
+    boolean controlling = false;
+  
+    double setPoint = 0.0;
     // Target RPM
-    private double targetRPM = 0;
+    private double targetRPM = 300;
 
     
     // Sets up the motor controller for use
@@ -25,19 +28,26 @@ class BallShooter{
         _shotFoll.follow(_shotMain);
         _shotMain.configFactoryDefault();
         _shotMain.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative ,0,kTimeoutMs);
+        RPMPID.setTolerance(50.0d);
    }
 
    // Get called by teleop periodic and tells the motor controller to reach or maintain a rpm value
    public void teleopPeriodic(){
-       _shotMain.set(RPMPID.calculate(getCurrentRPM()));
+     if ( controlling) {
+    _shotFoll.follow( _shotMain );
+    setPoint = RPMPID.calculate(getCurrentRPM());
+    System.out.print("new target is: " + setPoint);
+    _shotMain.set( setPoint);
+       //_shotMain.set(0.10);
+     }
    }
 
    // Calculter the current RPM based on values from the encoder
    public double getCurrentRPM(){
 
     double magVel_UnitsPer100ms = _shotMain.getSelectedSensorVelocity(0);
-    double magVelRPM = magVel_UnitsPer100ms * 600 / 4096;
-    System.out.print("Mag encoder is: " + magVelRPM);
+    double magVelRPM = Math.abs( magVel_UnitsPer100ms * 600 / 4096 );
+//    System.out.print("Mag encoder is: " + magVelRPM);
 
 
        return magVelRPM;
@@ -45,9 +55,9 @@ class BallShooter{
 
    // Sets the PID's setpointto the RPM value desired by the user
    public void setRPM(double RPM){
-    
-        targetRPM = RPM;
-        RPMPID.setSetpoint(targetRPM);
+    controlling = true;
+    targetRPM = RPM;
+    RPMPID.setSetpoint( targetRPM );
 
    }
 
@@ -55,7 +65,12 @@ class BallShooter{
    public boolean atRPM(){
         return (getCurrentRPM() == targetRPM);
    }
-
+   public void stop() {
+     controlling = false;
+     _shotMain.set( 0.0d );
+     RPMPID.reset();
+    }
+ 
    /*public void testInit(){
     final int kTimeoutMs = 30;
     _shotMain.configFactoryDefault();

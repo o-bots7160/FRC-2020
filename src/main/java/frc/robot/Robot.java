@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    shooter.robotInit();
   }
 
   @Override
@@ -56,9 +57,9 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
     }*/
     if(_joystick.getRawButton(1)) {
-      shooter.setRPM( 4000 *( -1 * _joystick.getY()));
+      shooter.setRPM( 3000.0d ); //(_joystick.getY()*4500.0d));
     } else {
-      shooter.setRPM(0);
+      shooter.stop();
     }
   }    
 }
