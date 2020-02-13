@@ -64,4 +64,11 @@ public class Robot extends TimedRobot {
     }
     SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
   }    
+
+
+
+
+protected void execute() {
+  SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+}
 }

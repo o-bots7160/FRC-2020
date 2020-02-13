@@ -88,3 +88,4 @@ class BallShooter{
     System.out.print("Mag encoder is: " + magVelRPM);
   }*/
 }
+
