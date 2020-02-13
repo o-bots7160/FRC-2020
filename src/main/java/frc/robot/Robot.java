@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,9 +58,10 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
     }*/
     if(_joystick.getRawButton(1)) {
-      shooter.setRPM( 1000.0d ); //(_joystick.getY()*4500.0d));
+      shooter.setRPM( 4500.0d ); //(_joystick.getY()*4500.0d));
     } else {
       shooter.stop();
     }
+    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
   }    
 }
