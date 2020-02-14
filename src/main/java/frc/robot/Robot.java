@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   //BallShooter shooter = new BallShooter();
   Joystick _joystick = new Joystick(0);
   Spinner spinner = new Spinner( );
+  BallShooter shooter = new BallShooter();
 
   @Override
   public void robotInit() {
@@ -58,6 +59,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if(_joystick.getRawButton(1)) {
+    shooter.setRPM( 4125.0d ); //(_joystick.getY()*4500.0d));
+  } else {
+    shooter.stop();
+  }
+  SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+
+
+
+    if(_joystick.getRawButton(1)) {
       spinner.rotate();
     } else if (_joystick.getRawButton(2)) {
         spinner.select(ColorState.RED);
@@ -69,6 +79,9 @@ public class Robot extends TimedRobot {
     spinner.select(ColorState.YELLOW);
   }
     spinner.teleopPeriodic();
+
+  }
+}
   /*  shooter.teleopPeriodic();
 
     System.out.println("Current RPM : " + shooter.getCurrentRPM());
@@ -79,13 +92,33 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
     }
     if(_joystick.getRawButton(1)) {
-      shooter.setRPM( 1000.0d ); //(_joystick.getY()*4500.0d));
+      shooter.setRPM( 4125.0d ); //(_joystick.getY()*4500.0d));
     } else {
       shooter.stop();
     }
-  }    
-  protected void execute() {
     SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
-} */
+  } 
+  
+  
+
+  @Override
+  public void testInit() {
+    
   }
-}
+
+  @Override
+  public void testPeriodic() {
+
+    shooter.teleopPeriodic();
+
+    System.out.println("Current RPM : " + shooter.getCurrentRPM());
+
+    if(_joystick.getRawButton(1)) {
+      shooter.setRPM( 6250.0d );
+    } else {
+      shooter.stop();
+    }
+    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+  } 
+  
+}*/
