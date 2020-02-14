@@ -24,31 +24,52 @@ public class Robot extends TimedRobot {
    * for any initialization code.
    */
 
-  BallShooter shooter = new BallShooter();
+  //BallShooter shooter = new BallShooter();
   Joystick _joystick = new Joystick(0);
+  Spinner spinner = new Spinner( );
 
   @Override
   public void robotInit() {
-    shooter.robotInit();
+    //shooter.robotInit();
+    spinner.robotInit();
+  }
+
+  @Override
+  public void robotPeriodic() {
+    //shooter.robotInit();
+    spinner.robotPeriodic();
   }
 
   @Override
   public void autonomousInit() {
+    spinner.autonomousInit();
   }
 
   @Override
   public void autonomousPeriodic() {
+    spinner.autonomousPeriodic();
   }
 
   @Override
   public void teleopInit() {
-    
+    spinner.teleopInit();
   }
 
   @Override
   public void teleopPeriodic() {
-
-    shooter.teleopPeriodic();
+    if(_joystick.getRawButton(1)) {
+      spinner.rotate();
+    } else if (_joystick.getRawButton(2)) {
+        spinner.select(ColorState.RED);
+    } else if (_joystick.getRawButton(3)) {
+      spinner.select(ColorState.BLUE);
+    } else if (_joystick.getRawButton(4)) {
+      spinner.select(ColorState.GREEN);
+  } else if (_joystick.getRawButton(5)) {
+    spinner.select(ColorState.YELLOW);
+  }
+    spinner.teleopPeriodic();
+  /*  shooter.teleopPeriodic();
 
     System.out.println("Current RPM : " + shooter.getCurrentRPM());
     
@@ -56,12 +77,15 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, ( _joystick.getZ() + ( horizAngle / 27.0d) ));
     } else {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
-    }*/
+    }
     if(_joystick.getRawButton(1)) {
-      shooter.setRPM( 4500.0d ); //(_joystick.getY()*4500.0d));
+      shooter.setRPM( 1000.0d ); //(_joystick.getY()*4500.0d));
     } else {
       shooter.stop();
     }
-    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
   }    
+  protected void execute() {
+    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+} */
+  }
 }
