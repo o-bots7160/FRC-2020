@@ -58,10 +58,33 @@ public class Robot extends TimedRobot {
       _diffDrive.arcadeDrive((_joystick.getY()*-1)*0.5, _joystick.getZ()*0.75);
     }*/
     if(_joystick.getRawButton(1)) {
-      shooter.setRPM( 4500.0d ); //(_joystick.getY()*4500.0d));
+      shooter.setRPM( 4125.0d ); //(_joystick.getY()*4500.0d));
     } else {
       shooter.stop();
     }
     SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
-  }    
+  } 
+  
+  
+
+  @Override
+  public void testInit() {
+    
+  }
+
+  @Override
+  public void testPeriodic() {
+
+    shooter.teleopPeriodic();
+
+    System.out.println("Current RPM : " + shooter.getCurrentRPM());
+
+    if(_joystick.getRawButton(1)) {
+      shooter.setRPM( 6250.0d );
+    } else {
+      shooter.stop();
+    }
+    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+  } 
+  
 }
