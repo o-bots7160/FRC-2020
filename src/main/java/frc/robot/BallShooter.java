@@ -1,16 +1,12 @@
-
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 class BallShooter{
     // Shooter Motor Controllers
-    /* Changed to TalonFX - JASON */
-          //private WPI_TalonSRX _shotMain = new WPI_TalonSRX(RobotMap._shotMain);
-          //private WPI_TalonSRX _shotFoll = new WPI_TalonSRX(RobotMap._shotFoll);
+
     private WPI_TalonFX _shotMain = new WPI_TalonFX(RobotMap._shotMain);
     // PID
     private final double kP = 0.0004;
@@ -75,21 +71,5 @@ class BallShooter{
      RPMPID.reset();
     }
  
-   /*public void testInit(){
-    final int kTimeoutMs = 30;
-    _shotMain.configFactoryDefault();
-    _shotMain.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative ,0,kTimeoutMs);
-  }
-  public void testPeriodic(){
-    if(joy.getRawButton(1)) {
-        _shotMain.set(ControlMode.PercentOutput, -1 * joy.getY());
-     }
-    else {
-        _shotMain.set(0);
-    }
-    double magVel_UnitsPer100ms = _shotMain.getSelectedSensorVelocity(0);
-    double magVelRPM = magVel_UnitsPer100ms * 600 / 4096;
-    System.out.print("Mag encoder is: " + magVelRPM);
-  }*/
-}
 
+}

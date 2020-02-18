@@ -1,6 +1,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Joystick;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatch;
@@ -10,37 +15,46 @@ import edu.wpi.first.wpilibj.util.Color;
 
 class Spinner {
 
-    private enum SpinnerModes { SPINNER_IDLE, SPINNER_ROTATE, SPINNER_SELECT };
-
+    private enum SpinnerModes   { SPINNER_IDLE, SPINNER_ARM, SPINNER_SETUP, SPINNER_ROTATION, SPINNER_POSITION };
+    private enum ColorState     { BLUE, RED, GREEN, YELLOW, UKNOWN};
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
-    private final WPI_TalonSRX  _colrWheel     = new WPI_TalonSRX(RobotMap._colrWhelID);
+    private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhelID);
+    private Joystick    _joystick;
+    private Led LEDS;
  
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
  
-    private final Color kBlueTarget   = ColorMatch.makeColor(0.143, 0.427, 0.429);
-    private final Color kGreenTarget  = ColorMatch.makeColor(0.197, 0.561, 0.240);
-    private final Color kRedTarget    = ColorMatch.makeColor(0.561, 0.232, 0.114);
-    private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+    private final Color kBlueTarget   = ColorMatch.makeColor(0.135, 0.465, 0.380);
+    private final Color kGreenTarget  = ColorMatch.makeColor(0.175, 0.585, 0.232);
+    private final Color kRedTarget    = ColorMatch.makeColor(0.465, 0.400, 0.160);
+    private final Color kYellowTarget = ColorMatch.makeColor(0.300, 0.575, 0.128);
 
-    private ColorState  colorCurrent = ColorState.UKNOWN;
-    private ColorState  colorStart   = ColorState.UKNOWN;
-    private ColorState  colorLast    = ColorState.UKNOWN;
-    private int     colorCount   = 0;
-    SpinnerModes     spinnerMode    = SpinnerModes.SPINNER_IDLE;
-    private int     changeCount  = 0;
+    private ColorState  validColor  = ColorState.UKNOWN; //Value of color to count
+    private ColorState  tempColor    = ColorState.UKNOWN;
+    private ColorState  fmsColor     = ColorState.UKNOWN;
+    private int         colorCount      = 0;
+    private int         gameStage       = 0;
+    SpinnerModes        spinnerMode    = SpinnerModes.SPINNER_IDLE;
+
+ 
+
 
 
     /*
      *
      * This function is called periodically during test mode.
      */
-    public Spinner( ) {
+    public Spinner( Led LEDS, Joystick _joy ) {
+        
+        _joystick = _joy;
+        this.LEDS = LEDS;
+
     }
 
     /*
      *
-     * This function is called periodically during test mode.
+     * This function is called when the robot is turned on
      */
     public void robotInit() {
         m_colorMatcher.addColorMatch(kBlueTarget);
@@ -49,184 +63,160 @@ class Spinner {
         m_colorMatcher.addColorMatch(kYellowTarget);
     }
 
-    /*
-     *
-     * This function is called periodically no matter the mode.
-     */
-    public void robotPeriodic() {
-        final Color detectedColor = m_colorSensor.getColor();
-        ColorState tempColor = ColorState.UKNOWN;
-
-        /**
-         * Run the color match algorithm on our detected color
-         */
-        final ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+ 
     
-        if ( match.color == kBlueTarget ) {
-            tempColor = ColorState.BLUE;
-        } else if ( match.color == kRedTarget ) {
-            tempColor = ColorState.RED;
-        } else if ( match.color == kGreenTarget ) {
-            tempColor = ColorState.GREEN;
-        } else if ( match.color == kYellowTarget ) {
-            tempColor = ColorState.YELLOW;
-        } else {
-            tempColor = ColorState.UKNOWN;          
-        }
-        //
-        //  See if we want to say the color changed
-        //
-        //
-        if ( tempColor != ColorState.UKNOWN )
-        {
-            if ( tempColor != colorCurrent ) {
-                changeCount++;
-                if ( changeCount > 8 ) {
-                    colorCurrent = tempColor;
-                    changeCount  = 0;
-                }
-            } else {
-                changeCount = 0;
-            }
-        }
-        /**
-         * Open Smart Dashboard or Shuffleboard to see the color detected by the 
-         * sensor.
-         */
-        SmartDashboard.putNumber("Confidence", match.confidence);
-        SmartDashboard.putString("Detected Color", colorCurrent.toString());
-    }
     /*
      *
      * This function is run once each time the robot enters autonomous mode.
      */
     public void autonomousInit() {
-        _colrWheel.set(0);
+        _colrWheel.stopMotor();
     }
-    /*
-     *
-     * This function is called periodically during autonomous.
-     */
-    public void autonomousPeriodic() {
+
+    public void teleopInit(){
+        spinnerMode = SpinnerModes.SPINNER_IDLE;
+        _colrWheel.setNeutralMode(NeutralMode.Brake);
+        
     }
-    
-    /*
-     *
-     * This function is called once each time the robot enters teleoperated mode.
-     */
-    public void teleopInit() {
-    }
-    /*
-     *
-     * This function is called periodically during teleoperated mode.
-     */
+
     public void teleopPeriodic() {
 
-        switch (spinnerMode) {
-            case SPINNER_IDLE:
-                // Nothing to see here
+            //TODO Change this to correct buttons when control board is done
+            if(_joystick.getRawButton(3)){//Button to tell Spinner system to run rotation control
+                gameStage = 2;
+                spinnerMode = SpinnerModes.SPINNER_ARM;
+
+            }else if(_joystick.getRawButton(4)){//Button to tell Spinner system to run position control
+                gameStage = 3;
+                spinnerMode = SpinnerModes.SPINNER_ARM;
+            }else if(_joystick.getRawButton(1)){//Button to tell Spinner system to go to idle mode
+                gameStage = 0;
+                spinnerMode = SpinnerModes.SPINNER_IDLE;
+            }
+
+/*
+*    Switch statement to control the different parts of the Spinner Control panel manipulator  
+*/            
+            switch (spinnerMode) {
+                
+/*
+*   Sets the spinner components back to and idle state   
+*/                
+                case SPINNER_IDLE: //default position
+                    _colrWheel.stopMotor();
+                    colorCount = 0;
+                    tempColor = ColorState.UKNOWN;
+                    
                 break;
-        
-            case SPINNER_ROTATE:
-                //
-                // Has The color changed?
-                //
-                //
-                if ( colorLast != colorCurrent )
-                {
-                    colorLast = colorCurrent;
-                    //
-                    // Have we reached the starting color again?
-                    //
-                    //
-                    if ( colorCurrent == colorStart )
-                    {
-                        colorCount++;
-                        //
-                        //  Have we counted the starting color enough times?
-                        //
-                        //
-                        if ( colorCount >= 8 )
-                        {
-                            spinnerMode = SpinnerModes.SPINNER_IDLE;
-                            _colrWheel.set( 0.0 ); // Done!
-                        }
-                    }
-                }
-                else
-                {
-                    changeCount = 0;
-                }
+                 
+/*
+*   Rotates the arm into position   
+*/                
+                case SPINNER_ARM: // move arm in to position
+                    //TODO Rotate arm in to position
+                    spinnerMode = SpinnerModes.SPINNER_SETUP;
+                   
                 break;
 
-            case SPINNER_SELECT:
-                /*
-                *
-                * Did we get the color we wanted?
-                */
-                if ( colorCurrent == colorStart )
-                {
-                    spinnerMode = SpinnerModes.SPINNER_IDLE;
-                    _colrWheel.set( 0.0 ); // Done!
-                }
+/*
+*   Decides which mode we are in   
+*/
+                case SPINNER_SETUP: //Checks if valid color and which part of game based on FMS data
+                    colorMatching();
+                    validColor = tempColor;
+                    if(validColor != ColorState.UKNOWN){ //Checking to make sure the color is good then go to next step
+                        if( gameStage == 2 ){
+                            spinnerMode = SpinnerModes.SPINNER_ROTATION;
+                        }else if ( gameStage == 3 ) {
+                            spinnerMode = SpinnerModes.SPINNER_POSITION;  
+                        }
+                    }
                 break;
+
+/*
+*   Rotation control   
+*/
+                case SPINNER_ROTATION: //Rotate 4 times
+                    if (colorCount <= 32){ //rotate until color has changed 32 times = 4 full rotations
+                        _colrWheel.set(.75); //This may be to fast??
+                        
+                        colorMatching();
+
+                        if(validColor != tempColor && tempColor != ColorState.UKNOWN){ //If the color has actually changed count it and set new valid color
+                            colorCount ++; //Add one for our color change
+                            validColor = tempColor;  //Set the new color as Valid  
+                        }
+                    }else{
+                        spinnerMode = SpinnerModes.SPINNER_IDLE;  
+                    }
+
+                    break;
+
+/*
+*   Position control
+*/
+                case SPINNER_POSITION:
+                String gameData;
+        
+                gameData = DriverStation.getInstance().getGameSpecificMessage();
+                    
+                if(gameData.length() > 0){
+//These have a 2 color offset to match the FMS sensor location
+                    if ( gameData.charAt(0) == 'B') fmsColor = ColorState.RED;
+                    if ( gameData.charAt(0) == 'R') fmsColor = ColorState.BLUE;
+                    if ( gameData.charAt(0) == 'G') fmsColor = ColorState.YELLOW;
+                    if ( gameData.charAt(0) == 'Y') fmsColor = ColorState.GREEN;
+
+                }else{
+                    
+                    fmsColor = ColorState.UKNOWN; 
+                }
+                    
+                    
+                    colorMatching();
+
+                    if ( fmsColor != tempColor && tempColor != ColorState.UKNOWN ){
+                        _colrWheel.set(.4); 
+                    }else{
+                        _colrWheel.stopMotor();
+                    }
+                
+
+                }
+            SmartDashboard.putNumber("color count", colorCount );
+            SmartDashboard.putString("First Color", validColor.toString() );
+            SmartDashboard.putString("Current Color", tempColor.toString() );
+            SmartDashboard.putString("CASE", spinnerMode.toString() );
+            SmartDashboard.putString("FMS Color", fmsColor.toString() );
+
+    }
+ 
+/*
+*   This is called to get the current color if it's a valid color
+*/
+     void colorMatching(){ 
+        Color detectedColor = m_colorSensor.getColor();
+       
+        ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+                
+            if ( match.color == kBlueTarget && match.confidence > 0.93 ) {
+                tempColor = ColorState.BLUE;
+                LEDS.setColor(0.83);
+            } else if ( match.color == kRedTarget  && match.confidence > 0.90 ) {
+                tempColor = ColorState.RED;
+                LEDS.setColor(0.61);
+            } else if ( match.color == kGreenTarget  && match.confidence > 0.94) {
+                tempColor = ColorState.GREEN;
+                LEDS.setColor(0.77);
+            } else if ( match.color == kYellowTarget && match.confidence > 0.96 ) {
+                tempColor = ColorState.YELLOW;
+                LEDS.setColor(0.69);
+            } else {
+                tempColor = ColorState.UKNOWN;
+                LEDS.setColor(0.41);  
         }
-        SmartDashboard.putNumber("color count", colorCount );
+        SmartDashboard.putNumber("Match Con", match.confidence);
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
-    public void testPeriodic() {
-    }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
-    public void disabledInit() {
-    }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
-    public void disabledPeriodic() {
-    }
-    /*
-     *
-     * This function rotates the spinner 4 times.
-     */
-    public void rotate(){
-        colorStart  = colorCurrent; // TODO: should we check if it is currently "Unknown"?
-        colorLast   = colorCurrent;
-        colorCount  = 0;
-        spinnerMode   = SpinnerModes.SPINNER_ROTATE;
-        changeCount = 0;
-        _colrWheel.set(0.35);
-    }
-    /*
-     *
-     * This function positions the spinner to a particular color.
-     */
-    public void select( final ColorState target) {
-        colorStart  = target;
-        spinnerMode   = SpinnerModes.SPINNER_SELECT;
-        changeCount = 0;
-        _colrWheel.set(0.35);
-        SmartDashboard.putString("Selected Color", colorStart.toString());
-    }
-    /*
-     *
-     * Returns true if done selecting color
-     */
-    public boolean done()
-    {
-        if ( spinnerMode == SpinnerModes.SPINNER_IDLE )
-        {
-            return false;
-        }
-        return true;
-    }
-    public ColorState current( ){
-        return colorCurrent;
-    }
+
+    
 }
