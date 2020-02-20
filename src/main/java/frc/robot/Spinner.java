@@ -18,7 +18,7 @@ class Spinner {
     private enum SpinnerModes   { SPINNER_IDLE, SPINNER_ARM, SPINNER_SETUP, SPINNER_ROTATION, SPINNER_POSITION };
     private enum ColorState     { BLUE, RED, GREEN, YELLOW, UKNOWN};
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
-    private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhelID);
+    private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhel);
     private Joystick    _joystick;
     private Led LEDS;
  

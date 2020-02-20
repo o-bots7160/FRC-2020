@@ -27,10 +27,8 @@ class WestCoastDrive {
     private final PIDController anglePID              = new PIDController(kP, kI, kD);
     private final WPI_TalonFX _rghtMain               = new WPI_TalonFX(RobotMap._rghtMain);
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
-    private final WPI_TalonFX _rghtFol2               = new WPI_TalonFX(RobotMap._rghtFol2);
     private final WPI_TalonFX _leftMain               = new WPI_TalonFX(RobotMap._leftMain);
     private final WPI_TalonFX _leftFol1               = new WPI_TalonFX(RobotMap._leftFol1);
-    private final WPI_TalonFX _leftFol2               = new WPI_TalonFX(RobotMap._leftFol2);
     
     DifferentialDrive m_robotDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
@@ -42,9 +40,7 @@ class WestCoastDrive {
         m_timer = ref_timer;
         m_timer.get();
         _rghtFol1.follow( _rghtMain  );
-        _rghtFol2.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
-        _leftFol2.follow( _leftMain  );
         _rghtMain.setInverted( true  );
         _leftMain.setInverted( false );
      }

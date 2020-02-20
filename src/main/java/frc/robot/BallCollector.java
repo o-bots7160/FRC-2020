@@ -1,9 +1,17 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.Timer;
 
 class BallCollector {
     private final Timer m_timer;
+    private CANSparkMax   _lowFeed = new CANSparkMax(RobotMap._lowFeed, MotorType.kBrushless);
+    private CANSparkMax   _upFeed  = new CANSparkMax(RobotMap._upFeed,  MotorType.kBrushless);
+    private WPI_VictorSPX _intake  = new WPI_VictorSPX(RobotMap._intake);
+
     /*
      *
      * This function is called periodically during test mode.
@@ -12,70 +20,36 @@ class BallCollector {
         m_timer = ref_timer;
         m_timer.get();
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void robotInit() {
     }
-    /*
-     *
-     * This function is called periodically no matter the mode.
-     */
     public void robotPeriodic() {
     }
-    /*
-     *
-     * This function is run once each time the robot enters autonomous mode.
-     */
     public void autonomousInit() {
     }
-    /*
-     *
-     * This function is called periodically during autonomous.
-     */
     public void autonomousPeriodic() {
     }
-    /*
-     *
-     * This function is called once each time the robot enters teleoperated mode.
-     */
     public void teleopInit() {
     }
-    /*
-     *
-     * This function is called periodically during teleoperated mode.
-     */
-    public void teleopPeriodic() {
+     public void teleopPeriodic() {
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void testPeriodic() {
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void disabledInit() {
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void disabledPeriodic() {
     }
-    /*
-     *
-     * Turn collector on to start collecting balls.
-     */
     public void on() {
     }
-    /*
-     *
-     * Turn collector off to stop collecting balls.
-     */
     public void off() {
     }
-  }
+    public void intake(){
+  
+    }
+    public void collectBalls(){
+   
+    }
+    public void backFeed(){
+   
+    }
+ 
+}
