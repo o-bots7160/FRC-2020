@@ -24,10 +24,11 @@ public class Robot extends TimedRobot {
    * for any initialization code.
    */
 
-  BallShooter shooter = new BallShooter();
-  Joystick _joystick = new Joystick(0);
-  Led LEDS = new Led();
-  Spinner spinner = new Spinner( LEDS, _joystick );
+  private BallShooter shooter = new BallShooter();
+  private Joystick _joystick = new Joystick(0);
+  private Led LEDS = new Led();
+  private Spinner spinner = new Spinner( LEDS, _joystick );
+  private Limelight limelight = new Limelight();
   //BallShooter shooter = new BallShooter( LEDS );
   
 
@@ -35,21 +36,22 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     shooter.robotInit();
     spinner.robotInit();
+    limelight.robotInit();
   }
 
   @Override
   public void robotPeriodic() {
- 
+    limelight.robotPeriodic();
   }
 
   @Override
   public void autonomousInit() {
-    spinner.autonomousInit();
+    
   }
 
   @Override
   public void autonomousPeriodic() {
-    //spinner.autonomousPeriodic();
+    
   }
 
   @Override

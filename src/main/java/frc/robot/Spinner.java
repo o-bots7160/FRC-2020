@@ -65,13 +65,7 @@ class Spinner {
 
  
     
-    /*
-     *
-     * This function is run once each time the robot enters autonomous mode.
-     */
-    public void autonomousInit() {
-        _colrWheel.stopMotor();
-    }
+
 
     public void teleopInit(){
         spinnerMode = SpinnerModes.SPINNER_IDLE;

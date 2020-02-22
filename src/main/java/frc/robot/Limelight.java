@@ -11,7 +11,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Limelight {
-
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   private boolean targetInSight = false;
   private double  horizAngle;
   private double  vertAngle;
@@ -26,7 +26,7 @@ public class Limelight {
   }
 
   public void robotPeriodic() {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    
 
     if ( table.getEntry("tv").getDouble( 0.0) != 0 )
     {
