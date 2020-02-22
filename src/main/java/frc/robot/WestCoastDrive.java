@@ -41,7 +41,9 @@ class WestCoastDrive {
         m_timer.get();
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
-        _rghtMain.setInverted( true  );
+
+        
+        _rghtMain.setInverted( false  );
         _leftMain.setInverted( false );
      }
      /*
@@ -68,6 +70,7 @@ class WestCoastDrive {
      * This function handles autonomous drive movement.
      */
     public void autonomousPeriodic() {
+
         /*double velocity , rotation;
 
         

@@ -2,12 +2,15 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 class BallShooter{
     // Shooter Motor Controllers
 
     private WPI_TalonFX _shotMain = new WPI_TalonFX(RobotMap._shotMain);
+    private WPI_TalonSRX _turret = new WPI_TalonSRX(RobotMap._turret );
     // PID
     private final double kP = 0.0004;
     private final double kI = 0.001;
@@ -69,7 +72,12 @@ class BallShooter{
      controlling = false;
      _shotMain.set( 0.0d );
      RPMPID.reset();
-    }
- 
+  }
+  public void turretOffset(double offset) {
+    _turret.set( offset );
+  }
+  public void turretOff() {
+    _turret.stopMotor();
+  }
 
 }

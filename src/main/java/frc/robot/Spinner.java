@@ -20,7 +20,6 @@ class Spinner {
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
     private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhel);
     private Joystick    _joystick;
-    private Led LEDS;
  
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
@@ -45,10 +44,9 @@ class Spinner {
      *
      * This function is called periodically during test mode.
      */
-    public Spinner( Led LEDS, Joystick _joy ) {
+    public Spinner( Joystick _joy ) {
         
         _joystick = _joy;
-        this.LEDS = LEDS;
 
     }
 
@@ -195,19 +193,14 @@ class Spinner {
                 
             if ( match.color == kBlueTarget && match.confidence > 0.93 ) {
                 tempColor = ColorState.BLUE;
-                LEDS.setColor(0.83);
             } else if ( match.color == kRedTarget  && match.confidence > 0.90 ) {
                 tempColor = ColorState.RED;
-                LEDS.setColor(0.61);
             } else if ( match.color == kGreenTarget  && match.confidence > 0.94) {
                 tempColor = ColorState.GREEN;
-                LEDS.setColor(0.77);
             } else if ( match.color == kYellowTarget && match.confidence > 0.96 ) {
                 tempColor = ColorState.YELLOW;
-                LEDS.setColor(0.69);
             } else {
                 tempColor = ColorState.UKNOWN;
-                LEDS.setColor(0.41);  
         }
         SmartDashboard.putNumber("Match Con", match.confidence);
     }

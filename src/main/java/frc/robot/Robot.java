@@ -7,6 +7,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,12 +27,16 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
+  private final Timer m_timer = new Timer();
+
 
   private BallShooter shooter = new BallShooter();
+  private BallCollector ballCollector = new BallCollector();
   private Joystick _joystick = new Joystick(0);
-  private Led LEDS = new Led();
-  private Spinner spinner = new Spinner( LEDS, _joystick );
+  private Spinner spinner = new Spinner( _joystick );
   private Limelight limelight = new Limelight();
+  private WestCoastDrive _drive = new WestCoastDrive( m_timer );
+  private double RPM = 1000.0d;
   //BallShooter shooter = new BallShooter( LEDS );
   
 
@@ -37,6 +45,7 @@ public class Robot extends TimedRobot {
     shooter.robotInit();
     spinner.robotInit();
     limelight.robotInit();
+    ballCollector.robotInit();
   }
 
   @Override
@@ -61,15 +70,73 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    //spinner.teleopPeriodic();
+    //ballCollector.teleopPeriodic();
+    //
+    //
     if(_joystick.getRawButton(1)) {
-    shooter.setRPM( 4125.0d ); //(_joystick.getY()*4500.0d));
-  } else {
+      // Max 4125.0d
+      shooter.setRPM( 2200.0d ); //(_joystick.getY()*4500.0d));
+    } else {
+      shooter.stop();
+    }
+    //
+    //  Set drive
+    //
+    //
+      _drive.arcadeDrive(_joystick.getY() / 0.5d, _joystick.getZ() / 0.5d);
+    //
+    //  Set intake
+    //
+    //
+    if(_joystick.getRawButton(7)){
+      ballCollector.intakeOn();
+    }else{
+      ballCollector.intakeOff();
+    }
+    //
+    //  Set hopper
+    //
+    //
+    if(_joystick.getRawButton(8)){
+      ballCollector.hopperOn();
+    }else{
+      ballCollector.hopperOff();
+    }
+    //
+    //  Spin turret
+    //
+    //
+    /*
+    if ( _joystick.getRawButton(3)){
+      shooter.turretOffset( 0.25d );
+    } else if (_joystick.getRawButton(4)) {
+      shooter.turretOffset( -0.25d );
+    } else {
+      shooter.turretOff();
+    }
+    */
+    //
+
     
-    shooter.stop();
+    SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
   }
-spinner.teleopPeriodic();
 
- SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+  public void testPeriodic(){
 
+    //_drive.arcadeDrive(_joystick.getY() * -0.5, _joystick.getZ() * 0.5d);
+    if(_joystick.getRawButton(8)){
+      ballCollector.hopperOn();
+    }else{
+      ballCollector.hopperOff();
+    }
+    
+    if(_joystick.getRawButton(7)){
+      ballCollector.intakeOn();
+    }else{
+      ballCollector.intakeOff();
+    }
 
-  }}
+  }
+
+}
