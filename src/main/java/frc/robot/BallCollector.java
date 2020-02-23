@@ -11,17 +11,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
     private CANSparkMax   _upFeed  = new CANSparkMax(RobotMap._upFeed,  MotorType.kBrushless);
     private WPI_VictorSPX _intake  = new WPI_VictorSPX(RobotMap._intake);
 
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public BallCollector( ) {
-   
-    }
-    public void robotInit() {
         _lowFeed.setInverted(true);
         _upFeed.setInverted(true);
     }
+
     public void intakeOn() {
         _intake.set( 0.25d );
     }

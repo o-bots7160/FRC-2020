@@ -4,13 +4,15 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 class BallShooter{
-    // Shooter Motor Controllers
 
+    // Shooter Motor Controllers
     private WPI_TalonFX _shotMain = new WPI_TalonFX(RobotMap._shotMain);
     private WPI_TalonSRX _turret = new WPI_TalonSRX(RobotMap._turret );
+    
     // PID
     private final double kP = 0.0004;
     private final double kI = 0.001;
@@ -21,11 +23,15 @@ class BallShooter{
   
     double setPoint = 0.0;
     // Target RPM
-    private double targetRPM = 300;
+    private double targetRPM = 2200.0d;
+
+    private Joystick _joy;
 
     
     // Sets up the motor controller for use
-    public void robotInit(){
+    public BallShooter(Joystick _joy){
+        
+        this._joy = _joy; 
         final int kTimeoutMs = 30;
         //_shotFoll.follow(_shotMain);
         _shotMain.configFactoryDefault();

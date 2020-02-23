@@ -47,23 +47,12 @@ class Spinner {
     public Spinner( Joystick _joy ) {
         
         _joystick = _joy;
-
-    }
-
-    /*
-     *
-     * This function is called when the robot is turned on
-     */
-    public void robotInit() {
         m_colorMatcher.addColorMatch(kBlueTarget);
         m_colorMatcher.addColorMatch(kGreenTarget);
         m_colorMatcher.addColorMatch(kRedTarget);
         m_colorMatcher.addColorMatch(kYellowTarget);
+
     }
-
- 
-    
-
 
     public void teleopInit(){
         spinnerMode = SpinnerModes.SPINNER_IDLE;

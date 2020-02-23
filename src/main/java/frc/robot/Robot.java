@@ -5,36 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------------*/
+/* Team 7160, Ludington Obots                                                 */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
+
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
+  
   private final Timer m_timer = new Timer();
-
-
-  private BallShooter shooter = new BallShooter();
-  private BallCollector ballCollector = new BallCollector();
   private Joystick _joystick = new Joystick(0);
-  private Spinner spinner = new Spinner( _joystick );
-  private Limelight limelight = new Limelight();
+
+  //      SUBSYSTEMS      //
+  private BallShooter shooter;
+  private BallCollector ballCollector;
+  private Spinner spinner;
+  private Limelight limelight;
   private WestCoastDrive _drive = new WestCoastDrive( m_timer );
   private double RPM = 1000.0d;
   //BallShooter shooter = new BallShooter( LEDS );
@@ -42,10 +34,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    shooter.robotInit();
-    spinner.robotInit();
-    limelight.robotInit();
-    ballCollector.robotInit();
+    shooter = new BallShooter(_joystick);
+    spinner = new Spinner( _joystick );
+    limelight = new Limelight();
+    ballCollector = new BallCollector();
   }
 
   @Override
