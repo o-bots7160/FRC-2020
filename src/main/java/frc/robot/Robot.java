@@ -19,15 +19,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
   
+  //------WPISYSTEMS------// 
   private final Timer m_timer = new Timer();
   private Joystick _joystick = new Joystick(0);
+  //----------------------//
 
-  //      SUBSYSTEMS      //
+  //------SUBSYSTEMS------//
   private BallShooter shooter;
   private BallCollector ballCollector;
   private Spinner spinner;
   private Limelight limelight;
   private WestCoastDrive _drive = new WestCoastDrive( m_timer );
+  //----------------------//
+
   private double RPM = 1000.0d;
   //BallShooter shooter = new BallShooter( LEDS );
   
