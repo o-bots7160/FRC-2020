@@ -10,8 +10,7 @@ class RobotMap{
     public static final int _turret         =   31;     //Victor SPX
     public static final int _endLift        =   35;     //Talon FX
     public static final int _leveler        =   36;     //Victor SPX
-    public static final int _colrarm        =   40;     //Talon SRX
-    public static final int _colrWhel       =   41;     //Victor SPX
+    public static final int _colrWhel       =   40;     //Victor SPX
     public static final int LEDs            =   0;      //PWM Spark RoboRio
     public static final int _intake         =   50;     //Victor SPX
     public static final int _lowFeed        =   51;     //Spark Max

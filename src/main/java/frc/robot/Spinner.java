@@ -36,6 +36,8 @@ class Spinner {
     private int         gameStage       = 0;
     SpinnerModes        spinnerMode    = SpinnerModes.SPINNER_IDLE;
 
+    private Led LEDS;
+
  
 
 
@@ -44,9 +46,12 @@ class Spinner {
      *
      * This function is called periodically during test mode.
      */
-    public Spinner( Joystick _joy ) {
+    public Spinner( Led LEDS, Joystick _joy ) {
         
         _joystick = _joy;
+
+        this.LEDS = LEDS;
+
         m_colorMatcher.addColorMatch(kBlueTarget);
         m_colorMatcher.addColorMatch(kGreenTarget);
         m_colorMatcher.addColorMatch(kRedTarget);
@@ -66,13 +71,18 @@ class Spinner {
             if(_joystick.getRawButton(3)){//Button to tell Spinner system to run rotation control
                 gameStage = 2;
                 spinnerMode = SpinnerModes.SPINNER_ARM;
+                //System.out.println("button3");
 
             }else if(_joystick.getRawButton(4)){//Button to tell Spinner system to run position control
                 gameStage = 3;
                 spinnerMode = SpinnerModes.SPINNER_ARM;
+                //System.out.println("button4");
             }else if(_joystick.getRawButton(1)){//Button to tell Spinner system to go to idle mode
                 gameStage = 0;
                 spinnerMode = SpinnerModes.SPINNER_IDLE;
+                //System.out.println("button1");
+
+                
             }
 
 /*
@@ -87,6 +97,7 @@ class Spinner {
                     _colrWheel.stopMotor();
                     colorCount = 0;
                     tempColor = ColorState.UKNOWN;
+                    System.out.println("idle");
                     
                 break;
                  
@@ -96,6 +107,7 @@ class Spinner {
                 case SPINNER_ARM: // move arm in to position
                     //TODO Rotate arm in to position
                     spinnerMode = SpinnerModes.SPINNER_SETUP;
+                    System.out.println("arm");
                    
                 break;
 
@@ -104,6 +116,7 @@ class Spinner {
 */
                 case SPINNER_SETUP: //Checks if valid color and which part of game based on FMS data
                     colorMatching();
+                    System.out.println("setup");
                     validColor = tempColor;
                     if(validColor != ColorState.UKNOWN){ //Checking to make sure the color is good then go to next step
                         if( gameStage == 2 ){
@@ -118,10 +131,11 @@ class Spinner {
 *   Rotation control   
 */
                 case SPINNER_ROTATION: //Rotate 4 times
-                    if (colorCount <= 32){ //rotate until color has changed 32 times = 4 full rotations
-                        _colrWheel.set(.75); //This may be to fast??
+                    if (colorCount <= 31){ //rotate until color has changed 32 times = 4 full rotations
+                        _colrWheel.set(.5); //This may be to fast??
                         
                         colorMatching();
+                        System.out.println("Rotate");
 
                         if(validColor != tempColor && tempColor != ColorState.UKNOWN){ //If the color has actually changed count it and set new valid color
                             colorCount ++; //Add one for our color change
@@ -138,6 +152,7 @@ class Spinner {
 */
                 case SPINNER_POSITION:
                 String gameData;
+                System.out.println("position");
         
                 gameData = DriverStation.getInstance().getGameSpecificMessage();
                     
@@ -157,12 +172,13 @@ class Spinner {
                     colorMatching();
 
                     if ( fmsColor != tempColor && tempColor != ColorState.UKNOWN ){
-                        _colrWheel.set(.4); 
+                        _colrWheel.set(.5); 
                     }else{
-                        _colrWheel.stopMotor();
+                        spinnerMode = SpinnerModes.SPINNER_IDLE;  
+
                     }
                 
-
+                        break;
                 }
             SmartDashboard.putNumber("color count", colorCount );
             SmartDashboard.putString("First Color", validColor.toString() );
@@ -180,17 +196,22 @@ class Spinner {
        
         ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
                 
-            if ( match.color == kBlueTarget && match.confidence > 0.93 ) {
-                tempColor = ColorState.BLUE;
-            } else if ( match.color == kRedTarget  && match.confidence > 0.90 ) {
-                tempColor = ColorState.RED;
-            } else if ( match.color == kGreenTarget  && match.confidence > 0.94) {
-                tempColor = ColorState.GREEN;
-            } else if ( match.color == kYellowTarget && match.confidence > 0.96 ) {
-                tempColor = ColorState.YELLOW;
-            } else {
-                tempColor = ColorState.UKNOWN;
-        }
+        if ( match.color == kBlueTarget && match.confidence > 0.93 ) {
+            tempColor = ColorState.BLUE;
+            LEDS.setColor(0.83);
+        } else if ( match.color == kRedTarget  && match.confidence > 0.90 ) {
+            tempColor = ColorState.RED;
+            LEDS.setColor(0.61);
+        } else if ( match.color == kGreenTarget  && match.confidence > 0.94) {
+            tempColor = ColorState.GREEN;
+            LEDS.setColor(0.77);
+        } else if ( match.color == kYellowTarget && match.confidence > 0.96 ) {
+            tempColor = ColorState.YELLOW;
+            LEDS.setColor(0.69);
+        } else {
+            tempColor = ColorState.UKNOWN;
+            LEDS.setColor(0.41);  
+    }
         SmartDashboard.putNumber("Match Con", match.confidence);
     }
 
