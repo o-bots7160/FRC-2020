@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
   private Spinner spinner;
   private Limelight limelight;
   private WestCoastDrive _drive = new WestCoastDrive( m_timer );
+  private Led LEDS = new Led();
   //----------------------//
 
   private double RPM = 1000.0d;
@@ -39,7 +40,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     shooter = new BallShooter(_joystick);
-    spinner = new Spinner( _joystick );
+    spinner = new Spinner( LEDS ,_joystick );
     limelight = new Limelight();
     ballHandler = new BallHandler(_joystick);
   }
@@ -82,7 +83,7 @@ public class Robot extends TimedRobot {
     //
       _drive.arcadeDrive(_joystick.getY() / 0.5d, _joystick.getZ() / 0.5d);
 
-      ballHandler.handler();
+      //ballHandler.handler();
     //
     //  Spin turret
     //
