@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
 
   //------SUBSYSTEMS------//
   private BallShooter shooter;
-  private BallCollector ballCollector;
+  private BallHandler ballHandler;
   private Spinner spinner;
   private Limelight limelight;
   private WestCoastDrive _drive = new WestCoastDrive( m_timer );
@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     shooter = new BallShooter(_joystick);
     spinner = new Spinner( _joystick );
     limelight = new Limelight();
-    ballCollector = new BallCollector();
+    ballHandler = new BallHandler(_joystick);
   }
 
   @Override
@@ -81,24 +81,8 @@ public class Robot extends TimedRobot {
     //
     //
       _drive.arcadeDrive(_joystick.getY() / 0.5d, _joystick.getZ() / 0.5d);
-    //
-    //  Set intake
-    //
-    //
-    if(_joystick.getRawButton(7)){
-      ballCollector.intakeOn();
-    }else{
-      ballCollector.intakeOff();
-    }
-    //
-    //  Set hopper
-    //
-    //
-    if(_joystick.getRawButton(8)){
-      ballCollector.hopperOn();
-    }else{
-      ballCollector.hopperOff();
-    }
+
+      ballHandler.handler();
     //
     //  Spin turret
     //
@@ -113,26 +97,12 @@ public class Robot extends TimedRobot {
     }
     */
     //
-
-    
     SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
   }
 
+  // Used for testing purposes 
+
   public void testPeriodic(){
-
-    //_drive.arcadeDrive(_joystick.getY() * -0.5, _joystick.getZ() * 0.5d);
-    if(_joystick.getRawButton(8)){
-      ballCollector.hopperOn();
-    }else{
-      ballCollector.hopperOff();
-    }
-    
-    if(_joystick.getRawButton(7)){
-      ballCollector.intakeOn();
-    }else{
-      ballCollector.intakeOff();
-    }
-
   }
 
 }

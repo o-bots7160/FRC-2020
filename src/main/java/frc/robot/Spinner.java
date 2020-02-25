@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 class Spinner {
 
-    private enum SpinnerModes   { SPINNER_IDLE, SPINNER_ARM, SPINNER_SETUP, SPINNER_ROTATION, SPINNER_POSITION };
+    private enum SpinnerModes   { SPINNER_IDLE, SPINNER_LIFT, SPINNER_SETUP, SPINNER_ROTATION, SPINNER_POSITION };
     private enum ColorState     { BLUE, RED, GREEN, YELLOW, UKNOWN};
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
     private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhel);
@@ -24,10 +24,12 @@ class Spinner {
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
  
+    //-------RGBColorValues-------//
     private final Color kBlueTarget   = ColorMatch.makeColor(0.135, 0.465, 0.380);
     private final Color kGreenTarget  = ColorMatch.makeColor(0.175, 0.585, 0.232);
     private final Color kRedTarget    = ColorMatch.makeColor(0.465, 0.400, 0.160);
     private final Color kYellowTarget = ColorMatch.makeColor(0.300, 0.575, 0.128);
+    //----------------------------//
 
     private ColorState  validColor  = ColorState.UKNOWN; //Value of color to count
     private ColorState  tempColor    = ColorState.UKNOWN;
@@ -39,11 +41,6 @@ class Spinner {
  
 
 
-
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public Spinner( Joystick _joy ) {
         
         _joystick = _joy;
@@ -65,11 +62,11 @@ class Spinner {
             //TODO Change this to correct buttons when control board is done
             if(_joystick.getRawButton(3)){//Button to tell Spinner system to run rotation control
                 gameStage = 2;
-                spinnerMode = SpinnerModes.SPINNER_ARM;
+                spinnerMode = SpinnerModes.SPINNER_LIFT;
 
             }else if(_joystick.getRawButton(4)){//Button to tell Spinner system to run position control
                 gameStage = 3;
-                spinnerMode = SpinnerModes.SPINNER_ARM;
+                spinnerMode = SpinnerModes.SPINNER_LIFT;
             }else if(_joystick.getRawButton(1)){//Button to tell Spinner system to go to idle mode
                 gameStage = 0;
                 spinnerMode = SpinnerModes.SPINNER_IDLE;
@@ -93,7 +90,7 @@ class Spinner {
 /*
 *   Rotates the arm into position   
 */                
-                case SPINNER_ARM: // move arm in to position
+                case SPINNER_LIFT: // move arm in to position
                     //TODO Rotate arm in to position
                     spinnerMode = SpinnerModes.SPINNER_SETUP;
                    

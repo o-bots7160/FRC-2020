@@ -32,43 +32,22 @@ class WestCoastDrive {
     
     DifferentialDrive m_robotDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
-    /*
-     *
-     * This function constructs the object with appropriate references.
-     */
     public WestCoastDrive( final Timer ref_timer) {
         m_timer = ref_timer;
         m_timer.get();
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
-
-        
+    
         _rghtMain.setInverted( false  );
         _leftMain.setInverted( false );
      }
-     /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void robotInit() {
         anglePID.setTolerance( 1.0d );
     }
-    /*
-     *
-     * This function is called periodically no matter the mode.
-     */
     public void robotPeriodic() {
     }
-    /*
-     *
-     * This function is run once each time the robot enters autonomous mode.
-     */
     public void autonomousInit() {
     }
-    /*
-     *
-     * This function handles autonomous drive movement.
-     */
     public void autonomousPeriodic() {
 
         /*double velocity , rotation;
@@ -79,35 +58,18 @@ class WestCoastDrive {
 
         m_robotDrive.arcadeDrive( velocity, rotation );*/
     }
-    /*
-     *
-     * This function is called once each time the robot enters teleoperated mode.
-     */
     public void teleopInit() {
+   
     }
-    /*
-     *
-     * This function is called periodically during teleoperated mode.
-     */
     public void teleopPeriodic() {
+    
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void testPeriodic() {
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
     public void disabledInit() {
         m_robotDrive.stopMotor(); // stop robot
     }
-    /*
-     *
-     * This function is called periodically during test mode.
-     */
+ 
     public void disabledPeriodic() {
     }
     /*
