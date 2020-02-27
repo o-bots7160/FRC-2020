@@ -28,23 +28,27 @@ public class InputMap{
     public static final int DRIVEJOY_Z          =    2;
     //
 
-    // MINPJOY_1 joy buttons
-    public static final int LIMELIGHT_ON        =    7;
-    public static final int SHOOTBUTTON         =    6;
-    public static final int INTAKE_IN           =    5;
-    public static final int INTAKE_OUT          =    4;
-    public static final int UPPER_HOPPER_UP     =    3;
-    public static final int LOWER_HOPPER_UP     =    2;
-    public static final int BACKFEED            =    1;
-
-    // MINPJOY_2 Joy buttons
-    public static final int LIFT_UP             =    1;
-    public static final int LIFT_DOWN           =    2;
     public static final int INGAGE_RATCHET      =    3;
     public static final int DISINGAGE_RATCHET   =    4;
+
+    // MINPJOY_1 joy buttons
+    public static final int SHOOTBUTTON         =    1;
+    public static final int UPPER_HOPPER_UP     =    2;
+    public static final int LOWER_HOPPER_UP     =    3;
+    public static final int COLOR_POSITION      =    4;
     public static final int COLOR_4_TIMES       =    5;
-    public static final int COLOR_POSITION      =    6;
-    public static final int COLOR_AUTO          =    7;
+    public static final int BACKFEED            =    6;
+    public static final int LIMELIGHT_ON        =    7;
+
+    // MINPJOY_2 Joy buttons
+    public static final int INTAKE_IN           =    1;
+    public static final int TURRET_LEFT         =    2;
+    public static final int TURRET_RIGHT        =    3;
+    public static final int LEVELER_RED         =    4;
+    public static final int LEVELER_GREEN       =    5;
+    public static final int LIFT_DOWN           =    6;
+    public static final int LIFT_UP             =    7;
+    public static final int COLOR_AUTO          =    8;
 
     
 

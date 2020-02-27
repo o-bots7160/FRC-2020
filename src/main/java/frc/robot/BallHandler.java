@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
     //----------------------------//
 
     private Joystick MINIPJOY_1;
+    private Joystick MINIPJOY_2;
 
 
     private enum autoMode{
@@ -25,8 +26,9 @@ import edu.wpi.first.wpilibj.Joystick;
 
     private autoMode mode;
 
-    public BallHandler(Joystick MINIPJOY_1) {
+    public BallHandler(Joystick MINIPJOY_1, Joystick MINIPJOY_2) {
         this.MINIPJOY_1 = MINIPJOY_1;
+        this.MINIPJOY_2 = MINIPJOY_2;
         _lowFeed.setInverted(true);
         _upFeed.setInverted(true);
         mode = autoMode.IDLE;
@@ -40,10 +42,9 @@ import edu.wpi.first.wpilibj.Joystick;
 
     public void telopPeriodic(){
 
+        // INTAKE
         if(MINIPJOY_1.getRawButton(InputMap.INTAKE_IN)){
             _intake.set(0.25d);
-        }else if(MINIPJOY_1.getRawButton(InputMap.INTAKE_OUT)){
-            _intake.set(-0.25d);
         }else{
             _intake.set(0.0d);
         }
@@ -66,6 +67,7 @@ import edu.wpi.first.wpilibj.Joystick;
             if(MINIPJOY_1.getRawButton(InputMap.BACKFEED)){
                 _upFeed.set(-0.25);
                 _lowFeed.set(-0.25);
+                _intake.set(-0.25d);
             }
         }
         //
