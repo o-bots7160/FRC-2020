@@ -19,7 +19,7 @@ class Spinner {
     private enum ColorState     { BLUE, RED, GREEN, YELLOW, UKNOWN};
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
     private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhel);
-    private Joystick    _joystick;
+    private Joystick    MINIPJOY_2;
  
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
@@ -48,9 +48,9 @@ class Spinner {
      *
      * This function is called periodically during test mode.
      */
-    public Spinner( Led LEDS, Joystick _joy ) {
+    public Spinner( Led LEDS, Joystick MINIPJOY_2 ) {
         
-        _joystick = _joy;
+        this.MINIPJOY_2 = MINIPJOY_2;
 
         this.LEDS = LEDS;
 
@@ -69,22 +69,17 @@ class Spinner {
 
     public void teleopPeriodic() {
 
+        if(MINIPJOY_2.getRawButton(InputMap.COLOR_AUTO)){
             //TODO Change this to correct buttons when control board is done
-            if(_joystick.getRawButton(3)){//Button to tell Spinner system to run rotation control
+            if(MINIPJOY_2.getRawButton(InputMap.COLOR_4_TIMES)){//Button to tell Spinner system to run rotation control
                 gameStage = 2;
                 spinnerMode = SpinnerModes.SPINNER_ROTATION;
                 //System.out.println("button3");
 
-            }else if(_joystick.getRawButton(4)){//Button to tell Spinner system to run position control
+            }else if(MINIPJOY_2.getRawButton(InputMap.COLOR_POSITION)){//Button to tell Spinner system to run position control
                 gameStage = 3;
                 spinnerMode = SpinnerModes.SPINNER_POSITION;
                 //System.out.println("button4");
-            }else if(_joystick.getRawButton(1)){//Button to tell Spinner system to go to idle mode
-                gameStage = 0;
-                spinnerMode = SpinnerModes.SPINNER_IDLE;
-                //System.out.println("button1");
-
-                
             }
 
 /*
@@ -179,9 +174,17 @@ class Spinner {
                         spinnerMode = SpinnerModes.SPINNER_IDLE;  
 
                     }
-                
                         break;
                 }
+            }else{
+                //Color left
+                if(MINIPJOY_2.getRawButton(InputMap.COLOR_4_TIMES))
+                    _colrWheel.set(0.5d);
+                else if(MINIPJOY_2.getRawButton(InputMap.COLOR_POSITION))
+                    _colrWheel.set(-0.5d);
+                else
+                    _colrWheel.set(0.0d);
+            }
             SmartDashboard.putNumber("color count", colorCount );
             SmartDashboard.putString("First Color", validColor.toString() );
             SmartDashboard.putString("Current Color", tempColor.toString() );

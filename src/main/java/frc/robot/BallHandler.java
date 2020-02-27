@@ -16,74 +16,60 @@ import edu.wpi.first.wpilibj.Joystick;
     private final WPI_VictorSPX _intake  = new WPI_VictorSPX(RobotMap._intake);
     //----------------------------//
 
-    //--------IndexSensors--------//
-    private final TimeOfFlight _intakeSensor = new TimeOfFlight(100);
-    private final TimeOfFlight _lowerToUpperSensor = new TimeOfFlight(101);
-    private final TimeOfFlight _UpperToShooterSensor = new TimeOfFlight(102);
-    //----------------------------//
+    private Joystick MINIPJOY_1;
 
-    private Joystick _joy;
 
-    private int ballCount = 0;
-
-    private enum CollectionMode{
-        IDLE, INTAKE, INDEXUP
+    private enum autoMode{
+        IDLE, INDEXUP
     }
 
-    private CollectionMode mode;
+    private autoMode mode;
 
-    public BallHandler(Joystick _joy) {
-        this._joy = _joy;
+    public BallHandler(Joystick MINIPJOY_1) {
+        this.MINIPJOY_1 = MINIPJOY_1;
         _lowFeed.setInverted(true);
         _upFeed.setInverted(true);
-        mode = CollectionMode.IDLE;
-
-
-        // TIME OF FLIGHT SENSOR RANGING MODES //
-        _intakeSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
-        _lowerToUpperSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
-        _UpperToShooterSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
+        mode = autoMode.IDLE;
 
     }
 
+    public void autoInit(){
+        mode = autoMode.IDLE;
+    }
 
-    public void handler(){
 
+    public void telopPeriodic(){
 
-        if(_joy.getRawButton(0)){
-            intakeOn();
+        if(MINIPJOY_1.getRawButton(InputMap.INTAKE_IN)){
+            _intake.set(0.25d);
+        }else if(MINIPJOY_1.getRawButton(InputMap.INTAKE_OUT)){
+            _intake.set(-0.25d);
+        }else{
+            _intake.set(0.0d);
         }
 
-    }
+        // LOWER HOPPER
+        if(MINIPJOY_1.getRawButton(InputMap.LOWER_HOPPER_UP)){
+            _lowFeed.set(0.25d);
+        }else{
+            _lowFeed.set(0.0d);
+        }
 
+        // UPPER HOPPER
+        if(MINIPJOY_1.getRawButton(InputMap.UPPER_HOPPER_UP)){
+            _upFeed.set(0.25d);
+        }else{
+            _upFeed.set(0.0d);
+        }
 
-    public boolean ballReady(){
+        if(!(MINIPJOY_1.getRawButton(InputMap.UPPER_HOPPER_UP) && MINIPJOY_1.getRawButton(InputMap.LOWER_HOPPER_UP))){
+            if(MINIPJOY_1.getRawButton(InputMap.BACKFEED)){
+                _upFeed.set(-0.25);
+                _lowFeed.set(-0.25);
+            }
+        }
+        //
 
-        //if()
-
-
-        return false;
-    }
-
-
-    private void ballCounter(){
-        if(_intakeSensor.getRange() <= 3)
-            ballCount++;
-    }
-
-    private void intakeOn() {
-        _intake.set( 0.25d );
-    }
-    private void intakeOff() {
-        _intake.stopMotor();
-    }
-    private void hopperOn() {
-        _lowFeed.set( 0.25d );
-        _upFeed.set( 0.25d );
-    }
-    private void hopperOff() {
-        _lowFeed.stopMotor();
-        _upFeed.stopMotor();
     }
  
 }

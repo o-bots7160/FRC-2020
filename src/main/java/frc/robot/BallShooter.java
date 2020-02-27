@@ -14,7 +14,7 @@ class BallShooter{
     private WPI_TalonSRX _turret = new WPI_TalonSRX(RobotMap._turret );
     
     // PID
-    private final double kP = 0.0004;
+    private final double kP = 0.002;
     private final double kI = 0.001;
     private final double kD = 0;
     private PIDController RPMPID = new PIDController(kP, kI, kD);
@@ -23,15 +23,15 @@ class BallShooter{
   
     double setPoint = 0.0;
     // Target RPM
-    private double targetRPM = 2200.0d;
+    private double targetRPM = 0.0d;
 
-    private Joystick _joy;
+    private Joystick MINIPJOY_1;
 
     
     // Sets up the motor controller for use
-    public BallShooter(Joystick _joy){
+    public BallShooter(Joystick MINIPJOY_1){
         
-        this._joy = _joy; 
+        this.MINIPJOY_1 = MINIPJOY_1; 
         final int kTimeoutMs = 30;
         //_shotFoll.follow(_shotMain);
         _shotMain.configFactoryDefault();
@@ -42,13 +42,30 @@ class BallShooter{
 
    // Get called by teleop periodic and tells the motor controller to reach or maintain a rpm value
    public void teleopPeriodic(){
-     if ( controlling) {
-    //_shotFoll.follow( _shotMain );
-    setPoint = RPMPID.calculate(getCurrentRPM());
-    System.out.print("new target is: " + setPoint);
-    _shotMain.set( setPoint);
-       //_shotMain.set(0.10);
+    if(MINIPJOY_1.getRawButton(InputMap.SHOOTBUTTON)){
+      //_shotFoll.follow( _shotMain );
+      setPoint = RPMPID.calculate(getCurrentRPM());
+      System.out.print("new target is: " + setPoint);
+      _shotMain.set( setPoint);
+      System.out.println(_shotMain.get());
+     }else{
+      _shotMain.set(0.0);
      }
+    
+     if(MINIPJOY_1.getRawButton(InputMap.LIMELIGHT_ON)){
+
+     }else{
+      /*if(MINIPJOY_1.getRawButton(1)){
+        _turret.set(0.25);
+        System.out.println("Positive");
+      }else if(MINIPJOY_1.getRawButton(2)){
+        _turret.set(-0.25);
+        System.out.println("Negitive");
+      }else{
+        _turret.set(0);
+      }*/
+    }
+
    }
 
    // Calculter the current RPM based on values from the encoder

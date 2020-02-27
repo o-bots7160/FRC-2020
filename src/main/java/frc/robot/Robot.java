@@ -21,16 +21,19 @@ public class Robot extends TimedRobot {
   
   //------WPISYSTEMS------// 
   private final Timer m_timer = new Timer();
-  private Joystick _joystick = new Joystick(0);
+  private final Timer autontimer = new Timer();
+  private final Joystick DRIVEJOY = new Joystick(InputMap.DRIVEJOY);
+  private final Joystick MINIPJOY_1 = new Joystick(InputMap.MINIPJOY_1);
   //----------------------//
 
   //------SUBSYSTEMS------//
   private BallShooter shooter;
   private BallHandler ballHandler;
   private Spinner spinner;
-  private Limelight limelight;
-  private WestCoastDrive _drive = new WestCoastDrive( m_timer );
+  private Limelight limeLight;
+  private WestCoastDrive _drive;
   private Led LEDS = new Led();
+  private Lift_Leveler liftLeveler;
   //----------------------//
 
   private double RPM = 1000.0d;
@@ -39,71 +42,57 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    shooter = new BallShooter(_joystick);
-    spinner = new Spinner( LEDS ,_joystick );
-    limelight = new Limelight();
-    ballHandler = new BallHandler(_joystick);
+    limeLight.lightOff();
+    autontimer.reset();
+    shooter = new BallShooter(MINIPJOY_1);
+    spinner = new Spinner( LEDS , MINIPJOY_1 );
+    limeLight = new Limelight();
+    ballHandler = new BallHandler(MINIPJOY_1);
+    _drive = new WestCoastDrive( m_timer, DRIVEJOY );
+    liftLeveler = new Lift_Leveler(MINIPJOY_1);
   }
 
   @Override
   public void robotPeriodic() {
-    limelight.robotPeriodic();
+    limeLight.robotPeriodic();
   }
 
   @Override
   public void autonomousInit() {
-    
+    autontimer.start();
   }
 
   @Override
   public void autonomousPeriodic() {
-    
+    if(autontimer.get()<=2){
+      _drive.arcadeDrive(.25, 0);
+    }else{
+      _drive.arcadeDrive(0, 0);
+    }
   }
 
   @Override
   public void teleopInit() {
     spinner.teleopInit();
+    shooter.setRPM(3300);
   }
 
   @Override
   public void teleopPeriodic() {
-    //spinner.teleopPeriodic();
-    //ballCollector.teleopPeriodic();
-    //
-    //
-    if(_joystick.getRawButton(1)) {
-      // Max 4125.0d
-      shooter.setRPM( 2200.0d ); //(_joystick.getY()*4500.0d));
-    } else {
-      shooter.stop();
-    }
-    //
-    //  Set drive
-    //
-    //
-      _drive.arcadeDrive(_joystick.getY() / 0.5d, _joystick.getZ() / 0.5d);
-
-      //ballHandler.handler();
-    //
-    //  Spin turret
-    //
-    //
-    /*
-    if ( _joystick.getRawButton(3)){
-      shooter.turretOffset( 0.25d );
-    } else if (_joystick.getRawButton(4)) {
-      shooter.turretOffset( -0.25d );
-    } else {
-      shooter.turretOff();
-    }
-    */
-    //
+    
+    _drive.teleopPeriodic();
+    shooter.teleopPeriodic();
+    ballHandler.telopPeriodic();
+    //liftLeveler.telopPeriodic();
+    
     SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+
   }
 
-  // Used for testing purposes 
+  
 
   public void testPeriodic(){
+    liftLeveler.telopPeriodic();
   }
 
 }

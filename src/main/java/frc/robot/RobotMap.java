@@ -9,6 +9,7 @@ class RobotMap{
     public static final int _shotMain       =   30;     //Talon FX
     public static final int _turret         =   31;     //Victor SPX
     public static final int _endLift        =   35;     //Talon FX
+    public static final int _endLiftServo   =    1;     //Servo
     public static final int _leveler        =   36;     //Victor SPX
     public static final int _colrWhel       =   40;     //Victor SPX
     public static final int LEDs            =   0;      //PWM Spark RoboRio
@@ -18,6 +19,7 @@ class RobotMap{
     public static final int _intakeSens     =   55;     //Distance Sensor
     public static final int _lowFeedSens    =   56;     //Distance Sensor
     public static final int _upFeedSens     =   57;     //Distance Sensor
+
     
 
     

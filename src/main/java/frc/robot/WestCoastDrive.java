@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -29,10 +30,15 @@ class WestCoastDrive {
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
     private final WPI_TalonFX _leftMain               = new WPI_TalonFX(RobotMap._leftMain);
     private final WPI_TalonFX _leftFol1               = new WPI_TalonFX(RobotMap._leftFol1);
-    
-    DifferentialDrive m_robotDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
-    public WestCoastDrive( final Timer ref_timer) {
+    private Joystick driveJoy;
+    
+    private final DifferentialDrive mainDrive = new DifferentialDrive(_leftMain, _rghtMain);
+
+    public WestCoastDrive( Timer ref_timer, Joystick driveJoy) {
+
+        this.driveJoy = driveJoy;
+
         m_timer = ref_timer;
         m_timer.get();
         _rghtFol1.follow( _rghtMain  );
@@ -40,12 +46,12 @@ class WestCoastDrive {
     
         _rghtMain.setInverted( false  );
         _leftMain.setInverted( false );
-     }
-    public void robotInit() {
+        _rghtMain.configClosedloopRamp(2);
+        _leftMain.configClosedloopRamp(2);
         anglePID.setTolerance( 1.0d );
-    }
-    public void robotPeriodic() {
-    }
+     }
+
+
     public void autonomousInit() {
     }
     public void autonomousPeriodic() {
@@ -62,20 +68,13 @@ class WestCoastDrive {
    
     }
     public void teleopPeriodic() {
+        if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
+         InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+            arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
+             driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+        }
     
     }
-    public void testPeriodic() {
-    }
-    public void disabledInit() {
-        m_robotDrive.stopMotor(); // stop robot
-    }
- 
-    public void disabledPeriodic() {
-    }
-    /*
-     *
-     * This function returns true when a robot successfully moves autonomously.
-     */
     public boolean atLocation()
     {
         currentLocation = _rghtMain.getSelectedSensorPosition() / TICKS_PER_FOOT;
@@ -96,19 +95,9 @@ class WestCoastDrive {
      * This function accepts joystick input to move the robot.
      */
     public void arcadeDrive( final double y, final double x) {
-        m_robotDrive.arcadeDrive( y, x);
+        mainDrive.arcadeDrive( y, x);
     }
-    /*
-     *
-     * This function stops the robot.
-     */
-    public void stop(){
-        m_robotDrive.stopMotor(); // stop robot
-    }
-    /*
-     *
-     * This function autonomously moves the robot.
-     */
+    
     public void autonomousMove( final double feet)
     {
         startLocation      = _rghtMain.getSelectedSensorPosition() / TICKS_PER_FOOT;
