@@ -22,7 +22,7 @@ class WestCoastDrive {
     // By degrees
     private double autonomousAngle                     = 0.0d;
     // By seconds
-    private final Timer m_timer;
+    private final Timer autonTimer;
 
     private final ADXRS450_Gyro gyro                  = new ADXRS450_Gyro( );
     private final PIDController anglePID              = new PIDController(kP, kI, kD);
@@ -35,12 +35,11 @@ class WestCoastDrive {
     
     private final DifferentialDrive mainDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
-    public WestCoastDrive( Timer ref_timer, Joystick driveJoy) {
+    public WestCoastDrive( Timer autonTimer, Joystick driveJoy) {
 
         this.driveJoy = driveJoy;
 
-        m_timer = ref_timer;
-        m_timer.get();
+        this.autonTimer = autonTimer;
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
     
@@ -55,24 +54,48 @@ class WestCoastDrive {
     public void autonomousInit() {
     }
     public void autonomousPeriodic() {
+        if(autonTimer.get() >= 10 && autonTimer.get() <= 12){
+            arcadeDrive(0.5d, 0);
+        }else{
+            arcadeDrive(0, 0);
+        }
 
-        /*double velocity , rotation;
-
-        
-
-        rotation = anglePID.calculate( currentAngle );
-
-        m_robotDrive.arcadeDrive( velocity, rotation );*/
     }
     public void teleopInit() {
    
     }
     public void teleopPeriodic() {
-        if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-         InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-            arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
-             driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
-        }
+        if(driveJoy.getRawButton(2)){
+
+            if(driveJoy.getRawButton(1)){
+                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
+                    InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                    arcadeDrive(driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * (InputMap.SPEED_Y - 0.15),
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z));
+                }
+            }else{
+                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
+                InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                    arcadeDrive(driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+                }
+            }
+
+        }else{
+            if(driveJoy.getRawButton(1)){
+                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
+                    InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                    arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * (InputMap.SPEED_Y - 0.15),
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z));
+                }
+            }else{
+                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
+                InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                    arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+                }
+            }
+    }
     
     }
     public boolean atLocation()

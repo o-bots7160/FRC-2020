@@ -12,6 +12,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,11 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   
     //------WPISYSTEMS------// 
-    private final Timer m_timer = new Timer();
-    private final Timer autontimer = new Timer();
+    private final Timer autonTimer = new Timer();
     private final Joystick DRIVEJOY = new Joystick(InputMap.DRIVEJOY);
     private final Joystick MINIPJOY_1 = new Joystick(InputMap.MINIPJOY_1);
     private final Joystick MINIPJOY_2 = new Joystick(InputMap.MINIPJOY_2);
+    private DriverStation driverStation = DriverStation.getInstance();
     //----------------------//
 
     //------SUBSYSTEMS------//
@@ -43,33 +44,31 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-      limeLight.lightOff();
-      autontimer.reset();
-      shooter = new BallShooter(MINIPJOY_2);
-      spinner = new Spinner( LEDS , MINIPJOY_1 );
+      //limeLight.lightOff();
+      //autontimer.reset();
+      shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
+      spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
       limeLight = new Limelight();
-      ballHandler = new BallHandler(MINIPJOY_1, MINIPJOY_2);
-      _drive = new WestCoastDrive( m_timer, DRIVEJOY );
-      liftLeveler = new Lift_Leveler(MINIPJOY_1, DRIVEJOY);
+      ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2);
+      _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
+      liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
     }
 
     @Override
     public void robotPeriodic() {
-      limeLight.robotPeriodic();
+      
     }
 
     @Override
     public void autonomousInit() {
-      autontimer.start();
+      autonTimer.start();
     }
 
     @Override
     public void autonomousPeriodic() {
-      if(autontimer.get()<=2){
-        _drive.arcadeDrive(.25, 0);
-      }else{
-        _drive.arcadeDrive(0, 0);
-      }
+      _drive.autonomousPeriodic();
+      shooter.autonomousPeriodic();
+      ballHandler.autonomousPeriodic();
     }
 
     @Override
@@ -80,11 +79,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+
+      if(driverStation.getMatchTime() <= 45.0d){
+        LEDS.setColor(0.61);
+      }
       
       _drive.teleopPeriodic();
       shooter.teleopPeriodic();
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
+      spinner.teleopPeriodic();
       
       SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
 

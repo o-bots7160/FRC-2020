@@ -12,7 +12,7 @@ class RobotMap{
     public static final int _endLiftServo   =    1;     //Servo
     public static final int _leveler        =   36;     //Victor SPX
     public static final int _colrWhel       =   40;     //Victor SPX
-    public static final int LEDs            =   0;      //PWM Spark RoboRio
+    public static final int LEDs            =    0;      //PWM Spark RoboRio
     public static final int _intake         =   50;     //Victor SPX
     public static final int _lowFeed        =   51;     //Spark Max
     public static final int _upFeed         =   52;     //Spark Max

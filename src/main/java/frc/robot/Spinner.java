@@ -19,7 +19,8 @@ class Spinner {
     private enum ColorState     { BLUE, RED, GREEN, YELLOW, UKNOWN};
     private final I2C.Port      i2cPort        = I2C.Port.kOnboard;
     private final WPI_VictorSPX  _colrWheel     = new WPI_VictorSPX(RobotMap._colrWhel);
-    private Joystick    MINIPJOY_2;
+    private Joystick    MINIPJOY_1;
+    private Joystick MINIPJOY_2;
  
     private final ColorSensorV3 m_colorSensor  = new ColorSensorV3(i2cPort);
     private final ColorMatch    m_colorMatcher = new ColorMatch();
@@ -48,10 +49,10 @@ class Spinner {
      *
      * This function is called periodically during test mode.
      */
-    public Spinner( Led LEDS, Joystick MINIPJOY_2 ) {
+    public Spinner( Led LEDS, Joystick MINIPJOY_1, Joystick MINIPJOY_2 ) {
         
+        this.MINIPJOY_1 = MINIPJOY_1;
         this.MINIPJOY_2 = MINIPJOY_2;
-
         this.LEDS = LEDS;
 
         m_colorMatcher.addColorMatch(kBlueTarget);
@@ -71,14 +72,14 @@ class Spinner {
 
         if(MINIPJOY_2.getRawButton(InputMap.COLOR_AUTO)){
             //TODO Change this to correct buttons when control board is done
-            if(MINIPJOY_2.getRawButton(InputMap.COLOR_4_TIMES)){//Button to tell Spinner system to run rotation control
+            if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){//Button to tell Spinner system to run rotation control
                 gameStage = 2;
-                spinnerMode = SpinnerModes.SPINNER_ROTATION;
+                spinnerMode = SpinnerModes.SPINNER_SETUP;
                 //System.out.println("button3");
 
-            }else if(MINIPJOY_2.getRawButton(InputMap.COLOR_POSITION)){//Button to tell Spinner system to run position control
+            }else if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){//Button to tell Spinner system to run position control
                 gameStage = 3;
-                spinnerMode = SpinnerModes.SPINNER_POSITION;
+                spinnerMode = SpinnerModes.SPINNER_SETUP;
                 //System.out.println("button4");
             }
 
@@ -177,12 +178,15 @@ class Spinner {
                         break;
                 }
             }else{
-                //Color left
-                if(MINIPJOY_2.getRawButton(InputMap.COLOR_4_TIMES))
+                //Color manual
+                //System.out.println("Manual");
+                if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){
+                    //System.out.println("4 manual");
                     _colrWheel.set(0.5d);
-                else if(MINIPJOY_2.getRawButton(InputMap.COLOR_POSITION))
+                }else if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){
+                    //System.out.println("POSManual");
                     _colrWheel.set(-0.5d);
-                else
+                }else
                     _colrWheel.set(0.0d);
             }
             SmartDashboard.putNumber("color count", colorCount );
