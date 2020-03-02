@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
       _drive.autonomousPeriodic();
       shooter.autonomousPeriodic();
       ballHandler.autonomousPeriodic();
+      LEDS.setColor(0.41);
     }
 
     @Override
@@ -82,6 +83,8 @@ public class Robot extends TimedRobot {
 
       if(driverStation.getMatchTime() <= 45.0d){
         LEDS.setColor(0.61);
+      }else{
+        LEDS.setColor(0.41);
       }
       
       _drive.teleopPeriodic();

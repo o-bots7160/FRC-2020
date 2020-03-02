@@ -47,9 +47,14 @@ import edu.wpi.first.wpilibj.Timer;
         if(autonTimer.get() >= 1 && autonTimer.get() <= 10){
             _lowFeed.set(0.35d);
             _upFeed.set(0.45d);
+            
+        }else if(autonTimer.get() >= 10 && autonTimer.get() <= 15){
+            _intake.set(0.35d);
+            _lowFeed.set(0.35d);
         }else{
-            _upFeed.set(0.0d);
+            _intake.set(0.0d);
             _lowFeed.set(0.0d);
+            _upFeed.set(0.0d);
         }
     }
 
@@ -57,7 +62,7 @@ import edu.wpi.first.wpilibj.Timer;
     public void telopPeriodic(){
 
         if(MINIPJOY_1.getRawButton(InputMap.SHOOTBUTTON)){
-            fastHop = 0.30d;
+            fastHop = 0.45d;
         }else{
             fastHop = 0.0d;
         }
