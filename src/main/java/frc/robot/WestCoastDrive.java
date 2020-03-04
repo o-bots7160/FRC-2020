@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 class WestCoastDrive {
