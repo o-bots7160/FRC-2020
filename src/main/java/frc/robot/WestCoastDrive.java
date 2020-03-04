@@ -6,6 +6,10 @@ import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 class WestCoastDrive {
@@ -17,8 +21,8 @@ class WestCoastDrive {
     private double currentAngle                        = 0.0d;
     private double startLocation                       = 0.0d;
 
-    // By feet
-    private double autonomousLocation                  = 0.0d;
+    // By inches
+    private double autonomousLocation                  = 24.0d;
     // By degrees
     private double autonomousAngle                     = 0.0d;
     // By seconds
@@ -30,12 +34,16 @@ class WestCoastDrive {
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
     private final WPI_TalonFX _leftMain               = new WPI_TalonFX(RobotMap._leftMain);
     private final WPI_TalonFX _leftFol1               = new WPI_TalonFX(RobotMap._leftFol1);
+    private final double ticks_Per_Inch = 3000; // Rounded, from 19114.666 repeating
 
     private Joystick driveJoy;
+
+    private double rot = 0.0d;
     
     private final DifferentialDrive mainDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
     public WestCoastDrive( Timer autonTimer, Joystick driveJoy) {
+
 
         this.driveJoy = driveJoy;
 
@@ -48,21 +56,45 @@ class WestCoastDrive {
         _rghtMain.configClosedloopRamp(2);
         _leftMain.configClosedloopRamp(2);
         anglePID.setTolerance( 1.0d );
+        _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
+
+        gyro.calibrate();
      }
 
 
     public void autonomousInit() {
+        _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
     }
-    public void autonomousPeriodic() {
-        if(autonTimer.get() >= 10 && autonTimer.get() <= 12){
-            arcadeDrive(0.5d, 0);
-        }else{
-            arcadeDrive(0, 0);
+    public void autonomousPeriodic(boolean ready) {
+
+        if(ready){
+            if(gyro.getAngle() >= 1) {
+                rot = -.05; 
+            }else if(gyro.getAngle() <= -1) {
+                rot = .05;
+                            
+            }else {
+                rot = 0;
+            }
+            /*if(autonTimer.get() >= 10 && autonTimer.get() <= 12){
+                arcadeDrive(0.5d, 0);
+            }else{
+                arcadeDrive(0, 0);
+            }*/
+
+            System.out.println("Current location: " + _rghtMain.getSelectedSensorPosition());
+
+            if(_rghtMain.getSelectedSensorPosition() >= -134841.9){
+                mainDrive.arcadeDrive(0.4, rot);
+            }else{
+                mainDrive.arcadeDrive(0.0, 0.0);
+            }
         }
 
     }
     public void teleopInit() {
-   
     }
     public void teleopPeriodic() {
         if(driveJoy.getRawButton(2)){
@@ -100,7 +132,7 @@ class WestCoastDrive {
     }
     public boolean atLocation()
     {
-        currentLocation = _rghtMain.getSelectedSensorPosition() / TICKS_PER_FOOT;
+        currentLocation = _rghtMain.getSelectedSensorPosition() / ticks_Per_Inch;
 
         return ( currentLocation >= autonomousLocation );
     }

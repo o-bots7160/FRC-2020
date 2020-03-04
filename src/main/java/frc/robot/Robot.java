@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-      _drive.autonomousPeriodic();
+      _drive.autonomousPeriodic(shooter.getShot());
       shooter.autonomousPeriodic();
       ballHandler.autonomousPeriodic();
       LEDS.setColor(0.41);
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
       spinner.teleopInit();
-      shooter.setRPM(3300);
+      shooter.setRPM(3100);
     }
 
     @Override
