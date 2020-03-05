@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
       //autontimer.reset();
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
-      limeLight = new Limelight();
+      limeLight = new Limelight( MINIPJOY_1, MINIPJOY_2, shooter );
       ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2);
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
       liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-      
+      ballHandler.robotPeriodic();
     }
 
     @Override
@@ -92,6 +92,8 @@ public class Robot extends TimedRobot {
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
       spinner.teleopPeriodic();
+      limeLight.teleopPeriodic();
+      
       
       SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
 

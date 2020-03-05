@@ -35,6 +35,7 @@ class BallShooter{
     private Timer autonTimer;
     private SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
     private boolean hasShot = false;
+    private boolean limeControl = false;
     
     
     // Sets up the motor controller for use
@@ -91,18 +92,27 @@ class BallShooter{
           RPMPID.reset();
           _shotMain.set(0.0);
         }
-
-        // Manual turret
-        if(MINIPJOY_2.getRawButton(InputMap.TURRET_LEFT)){
-          _turret.set(0.15);
-          System.out.println("Positive");
-        }else if(MINIPJOY_2.getRawButton(InputMap.TURRET_RIGHT)){
-          _turret.set(-0.15);
-          System.out.println("Negitive");
+        if(!MINIPJOY_1.getRawButton(InputMap.LIMELIGHT_ON)){
+          limeControl = false;
+          // Manual turret
+          if(MINIPJOY_2.getRawButton(InputMap.TURRET_LEFT)){
+            _turret.set(0.15);
+            System.out.println("Positive");
+          }else if(MINIPJOY_2.getRawButton(InputMap.TURRET_RIGHT)){
+            _turret.set(-0.15);
+            System.out.println("Negitive");
+          }else{
+            _turret.set(0);
+          }
         }else{
-          _turret.set(0);
+          limeControl = true;
         }
 
+   }
+
+   public void turretTurn(double turnRate){
+     if(limeControl)
+      _turret.set(turnRate);
    }
 
    // Calculter the current RPM based on values from the encoder
