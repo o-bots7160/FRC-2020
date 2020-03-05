@@ -36,7 +36,7 @@ class OnOffDelay {
 			}
 		} else {
 			if ( ! value ) {
-				if ( timer.hasElapsed( on_delay ) ) {
+				if ( timer.hasElapsed( off_delay ) ) {
 					filtered = false;
 					timer.stop();
 				}

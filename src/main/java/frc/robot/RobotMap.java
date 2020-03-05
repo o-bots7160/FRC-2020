@@ -16,9 +16,8 @@ class RobotMap{
     public static final int _intake         =   50;     //Victor SPX
     public static final int _lowFeed        =   51;     //Spark Max
     public static final int _upFeed         =   52;     //Spark Max
-    public static final int _intakeSens     =   55;     //Distance Sensor
-    public static final int _lowFeedSens    =   56;     //Distance Sensor
-    public static final int _upFeedSens     =   57;     //Distance Sensor
+    public static final int _intakeSens     =  101;     //Distance Sensor
+    public static final int _upFeedSens     =  102;     //Distance Sensor
 
     
 
