@@ -62,10 +62,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
       autonTimer.start();
+      ballHandler.setBrakeMode();
     }
 
     @Override
-    public void autonomousPeriodic() {
+    public void autonomousPeriodic(){ 
       _drive.autonomousPeriodic(shooter.getShot());
       shooter.autonomousPeriodic();
       ballHandler.autonomousPeriodic();
@@ -74,6 +75,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+
+      _drive.teleopInit();
       spinner.teleopInit();
       shooter.setRPM(3100);
     }
@@ -99,10 +102,16 @@ public class Robot extends TimedRobot {
 
     }
 
-    
+    public void disabledInit(){
+      ballHandler.disabledInit();
+    }
+
+    public void testInit(){
+      _drive.testInit();
+    }
 
     public void testPeriodic(){
-        liftLeveler.telopPeriodic();
+        _drive.testing();
     }
 
 }

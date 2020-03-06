@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -55,6 +56,16 @@ import edu.wpi.first.wpilibj.Timer;
 
 		newBall = ballDelay.isOn( collectorRange < 25.0d ); // We have a ball if distance is less than Xmm
         full    = intakeRange < 25.0d;
+	}
+
+	public void disabledInit(){
+		_lowFeed.setIdleMode(IdleMode.kCoast);
+		_upFeed.setIdleMode(IdleMode.kCoast);
+	}
+
+	public void setBrakeMode(){
+		_lowFeed.setIdleMode(IdleMode.kBrake);
+		_upFeed.setIdleMode(IdleMode.kBrake);
 	}
 
 	public void autonomousPeriodic(){

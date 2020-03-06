@@ -2,25 +2,30 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 //import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+//import com.ctre.phoenix.motorcontrol.can.BasePIDSetConfiguration;
+
+import com.kauailabs.navx.frc.AHRS;
 
 class WestCoastDrive {
     private final double TICKS_PER_FOOT                = 1000.0d;
-    private final double kP                            = 0.5d;
+    private final double kP                            = 0.06d;
     private final double kI                            = 0.0d;
     private final double kD                            = 0.0d;
     private double currentLocation                     = 0.0d;
     private double currentAngle                        = 0.0d;
     private double startLocation                       = 0.0d;
-
+    private AHRS navX;
     // By inches
     private double autonomousLocation                  = 24.0d;
     // By degrees
@@ -43,6 +48,11 @@ class WestCoastDrive {
     private final DifferentialDrive mainDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
     public WestCoastDrive( Timer autonTimer, Joystick driveJoy) {
+        try{
+            navX = new AHRS(SPI.Port.kMXP);
+        }catch(RuntimeException e){
+            e.printStackTrace();
+        }
 
 
         this.driveJoy = driveJoy;
@@ -69,15 +79,7 @@ class WestCoastDrive {
     }
     public void autonomousPeriodic(boolean ready) {
 
-        if(ready){
-            if(gyro.getAngle() >= 1) {
-                rot = -.05; 
-            }else if(gyro.getAngle() <= -1) {
-                rot = .05;
-                            
-            }else {
-                rot = 0;
-            }
+        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
             /*if(autonTimer.get() >= 10 && autonTimer.get() <= 12){
                 arcadeDrive(0.5d, 0);
             }else{
@@ -87,7 +89,7 @@ class WestCoastDrive {
             System.out.println("Current location: " + _rghtMain.getSelectedSensorPosition());
 
             if(_rghtMain.getSelectedSensorPosition() >= -134841.9){
-                mainDrive.arcadeDrive(0.4, rot);
+                mainDrive.arcadeDrive(0.4, rotRate);
             }else{
                 mainDrive.arcadeDrive(0.0, 0.0);
             }
@@ -95,8 +97,12 @@ class WestCoastDrive {
 
     }
     public void teleopInit() {
+        navX.zeroYaw();
     }
     public void teleopPeriodic() {
+
+        SmartDashboard.putNumber("Gyro Reaing", navX.getAngle());
+
         if(driveJoy.getRawButton(2)){
 
             if(driveJoy.getRawButton(1)){
@@ -109,7 +115,7 @@ class WestCoastDrive {
                 if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
                 InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
                     arcadeDrive(driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z - 0.15);
                 }
             }
 
@@ -118,7 +124,7 @@ class WestCoastDrive {
                 if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
                     InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
                     arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * (InputMap.SPEED_Y - 0.15),
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z));
+                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z - 0.15));
                 }
             }else{
                 if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
@@ -127,24 +133,9 @@ class WestCoastDrive {
                     driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
                 }
             }
+        }
     }
     
-    }
-    public boolean atLocation()
-    {
-        currentLocation = _rghtMain.getSelectedSensorPosition() / ticks_Per_Inch;
-
-        return ( currentLocation >= autonomousLocation );
-    }
-    /*
-     *
-     * This function returns true when the robot successfully turns autonomously.
-     */
-    public boolean atAngle()
-    {
-        currentAngle = gyro.getAngle( ) % 360.0d;
-        return ( Math.abs( currentAngle - autonomousAngle ) < 10.0 );
-    }
     /*
      *
      * This function accepts joystick input to move the robot.
@@ -159,15 +150,34 @@ class WestCoastDrive {
         currentLocation    = startLocation;
         autonomousLocation = feet;
     }
-    /*
-     *
-     * This function rotates the robot a specified number of degrees.
-     */
-    public void autonomousRotate( final double angle)
-    {
-        autonomousAngle = angle;
-        anglePID.reset      (       );
-        anglePID.setSetpoint( angle );
-        currentAngle    = gyro.getAngle( ) % 360.0d;
+
+    Timer tempTimer = new Timer();
+
+    public void testInit(){
+        tempTimer.reset();
+        tempTimer.start();
+        anglePID.reset();
+        navX.reset();
+        anglePID.setSetpoint(0.0);
+    }
+
+    public void testing(){
+
+        SmartDashboard.putNumber("Gyro Reading: ", navX.getAngle());
+        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
+
+        /*if(rotRate > 0.4){
+            rotRate = 0.4;
+        }else if(rotRate < -0.4){
+            rotRate = -0.4;
+        }*/
+
+        if(tempTimer.get() <= 6){
+            arcadeDrive(.45, rotRate);
+        }else{
+            arcadeDrive(0, 0);
+        }
+
+
     }
 }
