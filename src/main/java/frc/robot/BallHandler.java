@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.Timer;
 	//----------------------------//
 
 	//--------Ball Sensors--------//
-	private final TimeOfFlight ballCollected = new TimeOfFlight( 0 );
-	private final TimeOfFlight intakeFull    = new TimeOfFlight( 1 );
+	private final TimeOfFlight ballCollected = new TimeOfFlight( RobotMap._intakeSens );
+	private final TimeOfFlight intakeFull    = new TimeOfFlight( RobotMap._upFeedSens );
 	//----------------------------//
 
 	private final OnOffDelay ballDelay      = new OnOffDelay( 0.5d, 1.5d );
@@ -46,16 +46,16 @@ import edu.wpi.first.wpilibj.Timer;
 		this.MINIPJOY_2 = MINIPJOY_2;
 		_lowFeed.setInverted(true);
 		_upFeed.setInverted(true);
-		mode  = telopMode.IDLE;
 		ballCollected.setRangingMode( RangingMode.Short, 24.0d );
 		intakeFull.setRangingMode   ( RangingMode.Short, 24.0d );
+		mode = telopMode.IDLE;
 	}
 	public void robotPeriodic() {
 		collectorRange  = ballCollected.getRange();
 		intakeRange     = intakeFull.getRange();
 
 		newBall = ballDelay.isOn( collectorRange < 25.0d ); // We have a ball if distance is less than Xmm
-        full    = intakeRange < 25.0d;
+		full    = intakeRange < 25.0d;
 	}
 
 	public void disabledInit(){
