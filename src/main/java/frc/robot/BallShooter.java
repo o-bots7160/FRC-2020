@@ -60,7 +60,7 @@ class BallShooter{
 
    public void autonomousPeriodic (){
     System.out.print("new target is: " + percentVoltage);
-      if(autonTimer.get() <= 5){
+      if(autonTimer.get() <= 6){
         _shotMain.set( 0.52);
       }else{
         hasShot = true;
@@ -81,6 +81,7 @@ class BallShooter{
 
         SmartDashboard.putNumber("PercentValue", shootPower);
         SmartDashboard.putNumber("RPM", getCurrentRPM());
+        SmartDashboard.putNumber("Volt", shootPower);
       
         // Manual shooter
         if(MINIPJOY_1.getRawButton(InputMap.SHOOTBUTTON)){

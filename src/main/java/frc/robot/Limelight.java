@@ -33,13 +33,11 @@ import edu.wpi.first.wpilibj.Joystick;
           
                 _turret.turretTurn(-m_LimelightSteerCommand);
                 
-          }
-          else
+          } else
           {
             _turret.turretTurn(0.0);
            }
   }
-
 
 
 
@@ -52,8 +50,8 @@ import edu.wpi.first.wpilibj.Joystick;
         final double TURN_K = 0.0225;                     // how hard to turn toward the target
         final double RIGHT_MAX = 0.4;                   // Max speed the turret motor can go
         final double LEFT_MAX = -0.4;
-        final double RIGHT_MIN = 0.03;
-        final double LEFT_MIN = -0.03;
+        final double RIGHT_MIN = 0.04;
+        final double LEFT_MIN = -0.04;
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);

@@ -22,8 +22,6 @@ class WestCoastDrive {
     private final double kP                            = 0.06d;
     private final double kI                            = 0.0d;
     private final double kD                            = 0.0d;
-    private double currentLocation                     = 0.0d;
-    private double currentAngle                        = 0.0d;
     private double startLocation                       = 0.0d;
     private AHRS navX;
     // By inches
@@ -43,7 +41,6 @@ class WestCoastDrive {
 
     private Joystick driveJoy;
 
-    private double rot = 0.0d;
     
     private final DifferentialDrive mainDrive = new DifferentialDrive(_leftMain, _rghtMain);
 
@@ -76,16 +73,14 @@ class WestCoastDrive {
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
         _rghtMain.setNeutralMode(NeutralMode.Brake);
         _leftMain.setNeutralMode(NeutralMode.Brake);
+        navX.reset();
+        anglePID.reset();
     }
     public void autonomousPeriodic(boolean ready) {
 
         double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
-            /*if(autonTimer.get() >= 10 && autonTimer.get() <= 12){
-                arcadeDrive(0.5d, 0);
-            }else{
-                arcadeDrive(0, 0);
-            }*/
-
+            
+            if(ready){
             System.out.println("Current location: " + _rghtMain.getSelectedSensorPosition());
 
             if(_rghtMain.getSelectedSensorPosition() >= -134841.9){
@@ -144,12 +139,6 @@ class WestCoastDrive {
         mainDrive.arcadeDrive( y, x);
     }
     
-    public void autonomousMove( final double feet)
-    {
-        startLocation      = _rghtMain.getSelectedSensorPosition() / TICKS_PER_FOOT;
-        currentLocation    = startLocation;
-        autonomousLocation = feet;
-    }
 
     Timer tempTimer = new Timer();
 
