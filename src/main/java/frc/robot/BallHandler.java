@@ -6,6 +6,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -24,12 +25,13 @@ import edu.wpi.first.wpilibj.Timer;
 	private final TimeOfFlight intakeFull    = new TimeOfFlight( RobotMap._upFeedSens );
 	//----------------------------//
 
-	private final OnOffDelay ballDelay      = new OnOffDelay( 0.5d, 1.5d );
+	private final OnOffDelay ballDelay      = new OnOffDelay( 0.0d, 0.15d );
+	private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
 	private       double     collectorRange = 0.0d;
 	private       double     intakeRange    = 0.0d;
 	private       boolean    newBall        = false;
 	private       boolean    full           = false;
-
+//  private final Timer timerdelay = new Timer();
 	private Joystick MINIPJOY_1;
 	private Joystick MINIPJOY_2;
 	private Timer autonTimer;
@@ -48,19 +50,22 @@ import edu.wpi.first.wpilibj.Timer;
 		_upFeed.setInverted(true);
 		ballCollected.setRangingMode( RangingMode.Short, 24.0d );
 		intakeFull.setRangingMode   ( RangingMode.Short, 24.0d );
-		mode = telopMode.IDLE;
+		mode = telopMode.ON;
 	}
 	public void robotPeriodic() {
 		collectorRange  = ballCollected.getRange();
 		intakeRange     = intakeFull.getRange();
 
-		newBall = ballDelay.isOn( collectorRange < 25.0d ); // We have a ball if distance is less than Xmm
-		full    = intakeRange < 25.0d;
+        SmartDashboard.putNumber("Intake", collectorRange );
+        SmartDashboard.putNumber("Full", intakeRange);
+
+		newBall = ballDelay.isOn( collectorRange < 100.0d ); // We have a ball if distance is less than Xmm
+		full    = fullDelay.isOn( intakeRange < 150.0d );
 	}
 
 	public void disabledInit(){
-		_lowFeed.setIdleMode(IdleMode.kCoast);
-		_upFeed.setIdleMode(IdleMode.kCoast);
+		//_lowFeed.setIdleMode(IdleMode.kCoast);
+		//_upFeed.setIdleMode(IdleMode.kCoast);
 	}
 
 	public void setBrakeMode(){
@@ -80,6 +85,7 @@ import edu.wpi.first.wpilibj.Timer;
 			_lowFeed.set( 0.0d );
 			_upFeed.set ( 0.0d );
 		}
+
 	}
 
 	private void telopManualControl() {
@@ -119,6 +125,10 @@ import edu.wpi.first.wpilibj.Timer;
 		// BACKFEED
 		//
 		//
+		//	if(timerdelay.get() <= 1.5){
+			
+			//MINIPJOY_1.getRawButton( InputMap.UPPER_HOPPER_UP); 
+			//MINIPJOY_1.getRawButton( InputMap.LOWER_HOPPER_UP); 
 		if ( ! ( MINIPJOY_1.getRawButton( InputMap.UPPER_HOPPER_UP ) &&
 		         MINIPJOY_1.getRawButton( InputMap.LOWER_HOPPER_UP ) ) ) {
 			if ( MINIPJOY_1.getRawButton( InputMap.BACKFEED ) ) {
@@ -145,8 +155,8 @@ import edu.wpi.first.wpilibj.Timer;
 			_lowFeed.set( 0.0d  );
 			_intake.set ( 0.0d  );
 		} else if ( newBall ) {
-			_upFeed.set ( 0.95d );
-			_lowFeed.set( 0.9d  );
+			_upFeed.set ( 0.3d );
+			_lowFeed.set( 0.35d  );
 			_intake.set ( 0.0d  );
 		} else {
 			_upFeed.set ( 0.0d  );
