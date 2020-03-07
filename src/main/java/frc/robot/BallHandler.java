@@ -27,13 +27,17 @@ import edu.wpi.first.wpilibj.Timer;
 
 	private final OnOffDelay ballDelay      = new OnOffDelay( 0.0d, 0.15d );
 	private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
+	private final OnOffDelay shotDelay      = new OnOffDelay( 0.85d, 0.0d );
+  //private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
 	private       double     collectorRange = 0.0d;
 	private       double     intakeRange    = 0.0d;
 	private       boolean    newBall        = false;
 	private       boolean    full           = false;
+	private 	  boolean 	 shot 			= false;
 //  private final Timer timerdelay = new Timer();
 	private Joystick MINIPJOY_1;
 	private Joystick MINIPJOY_2;
+	private Joystick DRIVEJOY;
 	private Timer autonTimer;
 	private Double fastHop = 0.0d;
 
@@ -42,10 +46,11 @@ import edu.wpi.first.wpilibj.Timer;
 	}
 	private telopMode mode;
 
-	public BallHandler(Timer autonTimer, Joystick MINIPJOY_1, Joystick MINIPJOY_2) {
+	public BallHandler(Timer autonTimer, Joystick MINIPJOY_1, Joystick MINIPJOY_2, Joystick DRIVEJOY) {
 		this.autonTimer = autonTimer;
 		this.MINIPJOY_1 = MINIPJOY_1;
 		this.MINIPJOY_2 = MINIPJOY_2;
+		this.DRIVEJOY   = DRIVEJOY;
 		_lowFeed.setInverted(true);
 		_upFeed.setInverted(true);
 		ballCollected.setRangingMode( RangingMode.Short, 24.0d );
@@ -61,6 +66,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 		newBall = ballDelay.isOn( collectorRange < 100.0d ); // We have a ball if distance is less than Xmm
 		full    = fullDelay.isOn( intakeRange < 150.0d );
+		shot = shotDelay.isOn( MINIPJOY_1.getRawButton( InputMap.SHOOTBUTTON ) );
 	}
 
 	public void disabledInit(){
@@ -143,20 +149,17 @@ import edu.wpi.first.wpilibj.Timer;
 		// BACKFEED
 		//
 		//
-		/* if ( ! ( MINIPJOY_1.getRawButton( InputMap.UPPER_HOPPER_UP ) &&
-		         MINIPJOY_1.getRawButton( InputMap.LOWER_HOPPER_UP ) ) ) {
-			if ( MINIPJOY_1.getRawButton( InputMap.BACKFEED ) ) {
-				_upFeed.set(-0.35);
-				_lowFeed.set(-0.45);
-				_intake.set(-0.45d);
-			}
-		} else */if ( full ) {
+		if ( MINIPJOY_1.getRawButton( InputMap.BACKFEED ) ) {
+			_upFeed.set(-0.35);
+			_lowFeed.set(-0.45);
+			_intake.set(-0.45d);
+		} else if ( full ) {
 			_upFeed.set ( 0.0d  );
 			_lowFeed.set( 0.0d  );
 			_intake.set ( 0.0d  );
 		} else if ( newBall ) {
-			_upFeed.set ( 0.3d );
-			_lowFeed.set( 0.35d  );
+			_upFeed.set ( 0.3d  );
+			_lowFeed.set( 0.35d );
 			_intake.set ( 0.0d  );
 		} else {
 			_upFeed.set ( 0.0d  );
@@ -183,11 +186,19 @@ import edu.wpi.first.wpilibj.Timer;
 				break;
 			case ON:
 				if ( MINIPJOY_1.getRawButton( InputMap.SHOOTBUTTON ) ) {
-					telopShoot();
-				} else {
+					if(shot){			
+						telopShoot();
+					}			
+				} else if (DRIVEJOY.getRawButton(InputMap.ENGAGE_INTAKE) ) { 
 					telopOn();
+				} else {
+					telopManualControl();
 				}
 				break;
 		}
-	}
+	}	
+		public boolean readyforball (){
+			return(!full && !newBall);
+
+		}
 }

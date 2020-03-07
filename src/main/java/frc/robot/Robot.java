@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
       limeLight = new Limelight( MINIPJOY_1, MINIPJOY_2, shooter );
-      ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2);
+      ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
       liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
     }
@@ -84,9 +84,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-      if(driverStation.getMatchTime() <= 45.0d){
+      if(ballHandler.readyforball()){
+        LEDS.setColor(0.77);
+      }else if(driverStation.getMatchTime() <= 45.0d){
         LEDS.setColor(0.61);
-      }else{
+      } else {
         LEDS.setColor(0.41);
       }
       
