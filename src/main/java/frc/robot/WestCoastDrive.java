@@ -18,7 +18,7 @@ import com.kauailabs.navx.frc.AHRS;
 class WestCoastDrive {
     private final double TICKS_PER_FOOT                = 1000.0d;
     private final double kP                            = 0.06d;
-    private final double kI                            = 0.0d;
+    private final double kI                            = 0.005d;
     private final double kD                            = 0.0d;
     private double startLocation                       = 0.0d;
     private AHRS navX;
@@ -63,7 +63,7 @@ class WestCoastDrive {
         anglePID.setTolerance( 1.0d );
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
 
-        gyro.calibrate();
+        //gyro.calibrate();
      }
 
 
@@ -73,18 +73,21 @@ class WestCoastDrive {
         _leftMain.setNeutralMode(NeutralMode.Brake);
         navX.reset();
         anglePID.reset();
+        anglePID.setSetpoint(0.0);
     }
     public boolean autonomousPeriodic(AutonModes mode) {
-
+        SmartDashboard.putNumber("Gyro Reading: ", navX.getAngle());
+        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
+        SmartDashboard.putNumber("Rotation: ", rotRate);
         switch(mode){
             case WAIT:
             arcadeDrive(0, 0);
             break;
 
             case DRIVEFOR:
-            double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
+            //double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
             arcadeDrive(0.45, rotRate);
-            if(_rghtMain.getSelectedSensorPosition() <= -134841.9)
+            if(_rghtMain.getSelectedSensorPosition() <= -150000)//134841.9
                 return true;
             break;
 
@@ -159,10 +162,26 @@ class WestCoastDrive {
         anglePID.setSetpoint(0.0);
     }
 
+    double rotRate = 0;
+
     public void testing(){
 
         SmartDashboard.putNumber("Gyro Reading: ", navX.getAngle());
-        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
+        
+
+        if(navX.getAngle() >= 2){
+            rotRate = -0.35;
+        }else if(navX.getAngle() <= -2){
+            rotRate = 0.35;
+        }else if(navX.getAngle() >= 1 ) {
+            rotRate = -.2; 
+        }else if(navX.getAngle() <= -1) {
+            rotRate = .2;
+                        
+        }else {
+            rotRate = 0;
+        }
+
 
         /*if(rotRate > 0.4){
             rotRate = 0.4;
@@ -170,8 +189,9 @@ class WestCoastDrive {
             rotRate = -0.4;
         }*/
 
-        if(tempTimer.get() <= 6){
+        if(tempTimer.get() <= 5){
             arcadeDrive(.45, rotRate);
+            SmartDashboard.putNumber("Rotation: ", rotRate);
         }else{
             arcadeDrive(0, 0);
         }

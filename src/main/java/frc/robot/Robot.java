@@ -63,10 +63,13 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
       autonTimer.start();
       ballHandler.setBrakeMode();
+      _drive.autonomousInit();
+      shooter.autonomousInit();
     }
 
     @Override
     public void autonomousPeriodic(){ 
+      limeLight.limePeriodic();
       if(autonTimer.get() <= 5){
       shooter.autonomousPeriodic(AutonModes.LINESHOT);
       ballHandler.autonomousPeriodic(AutonModes.LINESHOT);
@@ -103,7 +106,7 @@ public class Robot extends TimedRobot {
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
       spinner.teleopPeriodic();
-      limeLight.teleopPeriodic();
+      limeLight.limePeriodic();
       
       
       SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());

@@ -58,9 +58,13 @@ class BallShooter{
         _shotMain.configGetSupplyCurrentLimit(config);
    }
 
+  
+   public void autonomousInit(){
+    limeControl = true;
+   }  
    public void autonomousPeriodic (AutonModes mode){
     System.out.print("new target is: " + percentVoltage);
-      if(autonTimer.get() <= 6){
+      if(autonTimer.get() <= 15){
         _shotMain.set( 0.52);
       }else{
         hasShot = true;

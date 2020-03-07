@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
  class Limelight {
   private Joystick    MINIPJOY_1;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.Joystick;
   private double m_LimelightSteerCommand = 0.0;
   
 
-  public void teleopPeriodic() {
+  public void limePeriodic() {
 
     Update_Limelight_Tracking();
 
@@ -29,8 +30,9 @@ import edu.wpi.first.wpilibj.Joystick;
 
           
             NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+            SmartDashboard.putNumber("Turret: ", m_LimelightSteerCommand);
             if (m_LimelightHasValidTarget){
-          
+                         
                 _turret.turretTurn(-m_LimelightSteerCommand);
                 
           } else
