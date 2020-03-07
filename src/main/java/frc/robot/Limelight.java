@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.Joystick;
   private double m_LimelightSteerCommand = 0.0;
   
 
-  public void teleopPeriodic() {
+  public void limePeriodic() {
 
     Update_Limelight_Tracking();
 
@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.Joystick;
           //if (m_Controller.getRawButton(1)){
 
           
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+            
             if (m_LimelightHasValidTarget){
           
                 _turret.turretTurn(-m_LimelightSteerCommand);
@@ -39,7 +39,20 @@ import edu.wpi.first.wpilibj.Joystick;
            }
   }
 
+public void lightOn(){
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+}
 
+public void lightOff(){
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+}
+
+public void realClose(){ 
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+}
+public void frontPanel(){
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
+}
 
   
 

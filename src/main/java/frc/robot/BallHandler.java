@@ -69,23 +69,25 @@ import edu.wpi.first.wpilibj.Timer;
 		shot = shotDelay.isOn( MINIPJOY_1.getRawButton( InputMap.SHOOTBUTTON ) );
 	}
 
-	public void disabledInit(){
-		//_lowFeed.setIdleMode(IdleMode.kCoast);
-		//_upFeed.setIdleMode(IdleMode.kCoast);
-	}
 
 	public void setBrakeMode(){
 		_lowFeed.setIdleMode(IdleMode.kBrake);
 		_upFeed.setIdleMode(IdleMode.kBrake);
 	}
+	
+	public void setCoastMode(){
+		_lowFeed.setIdleMode(IdleMode.kCoast);
+		_upFeed.setIdleMode(IdleMode.kCoast);
+	}
 
 	public void autonomousPeriodic(){
-		if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 10 ) ) {
+		if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 5 ) ) {
 			_lowFeed.set( 0.35d );
 			_upFeed.set ( 0.45d );
-        	} else if ( ( autonTimer.get() >= 10 ) && ( autonTimer.get() <= 15 ) ) {
+        	} else if ( ( autonTimer.get() >= 5 ) && ( autonTimer.get() <= 15 ) ) {
 			_intake.set ( 0.35d );
-			_lowFeed.set( 0.35d );
+			_lowFeed.set( 1.0d );
+			_upFeed.set ( 0.95d );
 		} else {
 			_intake.set ( 0.0d );
 			_lowFeed.set( 0.0d );

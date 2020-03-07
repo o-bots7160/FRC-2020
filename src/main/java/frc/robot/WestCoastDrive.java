@@ -39,6 +39,8 @@ class WestCoastDrive {
     private final WPI_TalonFX _leftFol1               = new WPI_TalonFX(RobotMap._leftFol1);
     private final double ticks_Per_Inch = 3000; // Rounded, from 19114.666 repeating
 
+    private double rotRate = 0.0d;
+
     private Joystick driveJoy;
 
     
@@ -76,19 +78,30 @@ class WestCoastDrive {
         navX.reset();
         anglePID.reset();
     }
-    public void autonomousPeriodic(boolean ready) {
+    public void autonomousPeriodic() {
 
-        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
-            
-            if(ready){
-            System.out.println("Current location: " + _rghtMain.getSelectedSensorPosition());
-
-            if(_rghtMain.getSelectedSensorPosition() >= -134841.9){
-                mainDrive.arcadeDrive(0.4, rotRate);
-            }else{
-                mainDrive.arcadeDrive(0.0, 0.0);
-            }
+        if(navX.getAngle() >= 2){
+            rotRate = -0.35;
+        }else if(navX.getAngle() <= -2){
+            rotRate = 0.35;
+        }else if(navX.getAngle() >= 1 ) {
+            rotRate = -.2; 
+        }else if(navX.getAngle() <= -1) {
+            rotRate = .2;
+                        
+        }else {
+            rotRate = 0;
         }
+        SmartDashboard.putNumber("Rotation: ", rotRate);
+        
+        SmartDashboard.putNumber("Drive Enc: ",_rghtMain.getSelectedSensorPosition() );
+            if(_rghtMain.getSelectedSensorPosition() >= -150000){
+                arcadeDrive(0.45, rotRate);
+                SmartDashboard.putString("Driving: ", "Driving");
+            }else{
+                SmartDashboard.putString("Driving: ", "DEAD!");
+                arcadeDrive(0.0, 0.0);
+            }
 
     }
     public void teleopInit() {
@@ -141,6 +154,12 @@ class WestCoastDrive {
     
 
     Timer tempTimer = new Timer();
+
+    public void disabledInit(){
+        _rghtMain.setNeutralMode(NeutralMode.Coast);
+        _leftMain.setNeutralMode(NeutralMode.Coast);
+
+    }
 
     public void testInit(){
         tempTimer.reset();

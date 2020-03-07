@@ -61,21 +61,35 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+      autonTimer.reset();
       autonTimer.start();
       ballHandler.setBrakeMode();
+      shooter.autonomousInit();
+      _drive.autonomousInit();
+      limeLight.lightOn();
     }
 
     @Override
     public void autonomousPeriodic(){ 
-      _drive.autonomousPeriodic(shooter.getShot());
-      shooter.autonomousPeriodic();
-      ballHandler.autonomousPeriodic();
+        limeLight.lightOn();
+        limeLight.limePeriodic();
+        //limeLight.realClose();
+        if(autonTimer.get() <= 5){
+            limeLight.realClose();
+            shooter.autonomousPeriodic();
+            ballHandler.autonomousPeriodic();
+        }else{
+            limeLight.frontPanel();
+            _drive.autonomousPeriodic();
+            ballHandler.autonomousPeriodic();
+            shooter.autonomousPeriodic();
+        }
       LEDS.setColor(0.41);
     }
 
     @Override
     public void teleopInit() {
-
+      ballHandler.setBrakeMode();
       _drive.teleopInit();
       spinner.teleopInit();
       shooter.setRPM(3100);
@@ -97,7 +111,7 @@ public class Robot extends TimedRobot {
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
       spinner.teleopPeriodic();
-      limeLight.teleopPeriodic();
+      limeLight.limePeriodic();
       
       
       SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
@@ -105,7 +119,11 @@ public class Robot extends TimedRobot {
     }
 
     public void disabledInit(){
-      ballHandler.disabledInit();
+      ballHandler.setCoastMode();
+      _drive.disabledInit();
+      shooter.disabledInit();
+      limeLight.lightOff();
+
     }
 
     public void testInit(){

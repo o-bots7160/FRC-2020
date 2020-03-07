@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -58,21 +59,24 @@ class BallShooter{
         _shotMain.configGetSupplyCurrentLimit(config);
    }
 
+   public void autonomousInit(){
+     _turret.setNeutralMode(NeutralMode.Brake);
+     limeControl = true;
+   }
+
    public void autonomousPeriodic (){
     System.out.print("new target is: " + percentVoltage);
-      if(autonTimer.get() <= 6){
-        _shotMain.set( 0.52);
+      if(autonTimer.get() <= 14.9){
+        _shotMain.set( 0.53);
       }else{
-        hasShot = true;
         _shotMain.set(0.0d);
       }
    }
 
-   public boolean getShot(){
-      return hasShot;
-   }
+
    // Get called by teleop periodic and tells the motor controller to reach or maintain a rpm value
    public void teleopPeriodic(){
+    _turret.setNeutralMode(NeutralMode.Brake);
       if(DRIVEJOY.getRawButton(5)){
         shootPower -= 0.01;
       }else if(DRIVEJOY.getRawButton(6)){
@@ -148,6 +152,10 @@ class BallShooter{
 
   public void turretOffset(double offset) {
       _turret.set( offset );
+  }
+
+  public void disabledInit(){
+    _turret.setNeutralMode(NeutralMode.Coast);
   }
 
 }
