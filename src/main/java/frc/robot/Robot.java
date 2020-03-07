@@ -67,9 +67,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic(){ 
-      _drive.autonomousPeriodic(shooter.getShot());
-      shooter.autonomousPeriodic();
-      ballHandler.autonomousPeriodic();
+      if(autonTimer.get() <= 5){
+      shooter.autonomousPeriodic(AutonModes.LINESHOT);
+      ballHandler.autonomousPeriodic(AutonModes.LINESHOT);
+      }else if(!_drive.autonomousPeriodic(AutonModes.DRIVEFOR)){
+        ballHandler.autonomousPeriodic(AutonModes.GATHER);
+      }else{
+        _drive.autonomousPeriodic(AutonModes.STOP);
+        ballHandler.autonomousPeriodic(AutonModes.COLORSHOT);
+        shooter.autonomousPeriodic(AutonModes.COLORSHOT);
+      }
       LEDS.setColor(0.41);
     }
 
@@ -79,6 +86,7 @@ public class Robot extends TimedRobot {
       _drive.teleopInit();
       spinner.teleopInit();
       shooter.setRPM(3100);
+
     }
 
     @Override

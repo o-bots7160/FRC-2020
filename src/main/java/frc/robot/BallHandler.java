@@ -73,7 +73,7 @@ import edu.wpi.first.wpilibj.Timer;
 		_upFeed.setIdleMode(IdleMode.kBrake);
 	}
 
-	public void autonomousPeriodic(){
+	public void autonomousPeriodic(AutonModes mode){
 		if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 10 ) ) {
 			_lowFeed.set( 0.35d );
 			_upFeed.set ( 0.45d );

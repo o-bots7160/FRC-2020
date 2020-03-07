@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 //import com.ctre.phoenix.motorcontrol.can.BasePIDSetConfiguration;
 
@@ -76,27 +74,38 @@ class WestCoastDrive {
         navX.reset();
         anglePID.reset();
     }
-    public void autonomousPeriodic(boolean ready) {
+    public boolean autonomousPeriodic(AutonModes mode) {
 
-        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
-            
-            if(ready){
-            System.out.println("Current location: " + _rghtMain.getSelectedSensorPosition());
+        switch(mode){
+            case WAIT:
+            arcadeDrive(0, 0);
+            break;
 
-            if(_rghtMain.getSelectedSensorPosition() >= -134841.9){
-                mainDrive.arcadeDrive(0.4, rotRate);
-            }else{
-                mainDrive.arcadeDrive(0.0, 0.0);
-            }
+            case DRIVEFOR:
+            double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
+            arcadeDrive(0.45, rotRate);
+            if(_rghtMain.getSelectedSensorPosition() <= -134841.9)
+                return true;
+            break;
+
+            case STOP:
+            arcadeDrive(0, 0);
+            break;
         }
 
+            //_rghtMain.getSelectedSensorPosition() -134841.9
+            return false;
+
     }
+
+
     public void teleopInit() {
-        navX.zeroYaw();
+    
     }
+
+    
     public void teleopPeriodic() {
 
-        SmartDashboard.putNumber("Gyro Reaing", navX.getAngle());
 
         if(driveJoy.getRawButton(2)){
 
