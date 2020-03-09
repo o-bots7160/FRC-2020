@@ -47,11 +47,17 @@ public void lightOff(){
   NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
 }
 
+public void default(){
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+}
 public void realClose(){ 
   NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
 }
 public void frontPanel(){
   NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
+}
+public void behindPanel(){
+  NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(3);
 }
 
   
