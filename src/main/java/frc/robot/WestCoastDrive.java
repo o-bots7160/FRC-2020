@@ -96,7 +96,7 @@ class WestCoastDrive {
         
         SmartDashboard.putNumber("Drive Enc: ",_rghtMain.getSelectedSensorPosition() );
             if(_rghtMain.getSelectedSensorPosition() >= -150000){
-                arcadeDrive(0.45, rotRate);
+                arcadeDrive(0.46, rotRate);
                 SmartDashboard.putString("Driving: ", "Driving");
             }else{
                 SmartDashboard.putString("Driving: ", "DEAD!");

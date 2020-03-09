@@ -44,8 +44,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-      //limeLight.lightOff();
-      //autontimer.reset();
+      
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
       limeLight = new Limelight( MINIPJOY_1, MINIPJOY_2, shooter );
@@ -73,7 +72,6 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic(){ 
         limeLight.lightOn();
         limeLight.limePeriodic();
-        //limeLight.realClose();
         if(autonTimer.get() <= 5){
             limeLight.realClose();
             shooter.autonomousPeriodic();
