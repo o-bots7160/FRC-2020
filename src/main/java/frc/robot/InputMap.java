@@ -21,9 +21,13 @@ public class InputMap{
     //
 
     // DRIVEJOY buttons
-    public static final int INGAGE_RATCHET      =    3;
-    public static final int DISINGAGE_RATCHET   =    4;
+    public static final int ENGAGE_INTAKE       =    1;
+    public static final int ENGAGE_RATCHET      =    3;
+    public static final int DISENGAGE_RATCHET   =    4;
     public static final int LIMELIGHT_TARGET    =    5;
+    public static final int REALCLOSE_PIPE      =    7;
+    public static final int FRONTPANEL_PIPE     =    9;
+    public static final int BEHINDPANEL_PIPE    =   11;
     //
 
     // MINPJOY_1 joy buttons

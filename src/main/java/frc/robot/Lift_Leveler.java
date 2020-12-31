@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -30,8 +31,7 @@ public class Lift_Leveler{
 
     public void telopPeriodic(){
 
-        
-
+        Levler.setNeutralMode(NeutralMode.Brake);
         // LIFT
         if(station.getMatchTime() <= 30.0d){
         if(MINIPJOY_2.getRawButton(InputMap.LIFT_UP) && liftAble){
@@ -53,10 +53,10 @@ public class Lift_Leveler{
         }
 
         // END LIFT SERVO
-        if(DRIVEJOY.getRawButton(InputMap.INGAGE_RATCHET)){
+        if(DRIVEJOY.getRawButton(InputMap.ENGAGE_RATCHET)){
             liftAble = false;
             endLiftServo.set(0.03);
-        }else if(DRIVEJOY.getRawButton(InputMap.DISINGAGE_RATCHET)){
+        }else if(DRIVEJOY.getRawButton(InputMap.DISENGAGE_RATCHET)){
             liftAble = true;
             endLiftServo.set(0.0);
         }

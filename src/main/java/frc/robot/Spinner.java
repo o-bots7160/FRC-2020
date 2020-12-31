@@ -26,10 +26,10 @@ class Spinner {
     private final ColorMatch    m_colorMatcher = new ColorMatch();
  
     //-------RGBColorValues-------//
-    private final Color kBlueTarget   = ColorMatch.makeColor(0.135, 0.465, 0.380);
-    private final Color kGreenTarget  = ColorMatch.makeColor(0.175, 0.585, 0.232);
-    private final Color kRedTarget    = ColorMatch.makeColor(0.465, 0.400, 0.160);
-    private final Color kYellowTarget = ColorMatch.makeColor(0.300, 0.575, 0.128);
+    private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+    private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+    private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+    private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
     //----------------------------//
 
     private ColorState  validColor  = ColorState.UKNOWN; //Value of color to count
@@ -75,12 +75,9 @@ class Spinner {
             if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){//Button to tell Spinner system to run rotation control
                 gameStage = 2;
                 spinnerMode = SpinnerModes.SPINNER_SETUP;
-                //System.out.println("button3");
-
             }else if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){//Button to tell Spinner system to run position control
                 gameStage = 3;
                 spinnerMode = SpinnerModes.SPINNER_SETUP;
-                //System.out.println("button4");
             }
 
 /*
@@ -94,9 +91,7 @@ class Spinner {
                 case SPINNER_IDLE: //default position
                     _colrWheel.stopMotor();
                     colorCount = 0;
-                    tempColor = ColorState.UKNOWN;
-                    System.out.println("idle");
-                    
+                    tempColor = ColorState.UKNOWN;                    
                 break;
                  
 /*
@@ -104,9 +99,7 @@ class Spinner {
 */                
                 case SPINNER_LIFT: // move arm in to position
                     //TODO Rotate arm in to position
-                    spinnerMode = SpinnerModes.SPINNER_SETUP;
-                    System.out.println("arm");
-                   
+                    spinnerMode = SpinnerModes.SPINNER_SETUP;                   
                 break;
 
 /*
@@ -114,7 +107,6 @@ class Spinner {
 */
                 case SPINNER_SETUP: //Checks if valid color and which part of game based on FMS data
                     colorMatching();
-                    System.out.println("setup");
                     validColor = tempColor;
                     if(validColor != ColorState.UKNOWN){ //Checking to make sure the color is good then go to next step
                         if( gameStage == 2 ){
@@ -130,10 +122,9 @@ class Spinner {
 */
                 case SPINNER_ROTATION: //Rotate 4 times
                     if (colorCount <= 31){ //rotate until color has changed 32 times = 4 full rotations
-                        _colrWheel.set(.5); //This may be to fast??
+                        _colrWheel.set(.85); //This may be to fast??
                         
                         colorMatching();
-                        System.out.println("Rotate");
 
                         if(validColor != tempColor && tempColor != ColorState.UKNOWN){ //If the color has actually changed count it and set new valid color
                             colorCount ++; //Add one for our color change
@@ -150,7 +141,6 @@ class Spinner {
 */
                 case SPINNER_POSITION:
                 String gameData;
-                System.out.println("position");
         
                 gameData = DriverStation.getInstance().getGameSpecificMessage();
                     
@@ -179,12 +169,9 @@ class Spinner {
                 }
             }else{
                 //Color manual
-                //System.out.println("Manual");
                 if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){
-                    //System.out.println("4 manual");
                     _colrWheel.set(0.5d);
                 }else if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){
-                    //System.out.println("POSManual");
                     _colrWheel.set(-0.5d);
                 }else
                     _colrWheel.set(0.0d);
@@ -207,18 +194,23 @@ class Spinner {
                 
         if ( match.color == kBlueTarget && match.confidence > 0.93 ) {
             tempColor = ColorState.BLUE;
+            System.out.println("Blue");
             LEDS.setColor(0.83);
         } else if ( match.color == kRedTarget  && match.confidence > 0.90 ) {
             tempColor = ColorState.RED;
+            System.out.println("Red");
             LEDS.setColor(0.61);
         } else if ( match.color == kGreenTarget  && match.confidence > 0.94) {
             tempColor = ColorState.GREEN;
+            System.out.println("Green");
             LEDS.setColor(0.77);
-        } else if ( match.color == kYellowTarget && match.confidence > 0.96 ) {
+        } else if ( match.color == kYellowTarget && match.confidence > 0.93 ) {
             tempColor = ColorState.YELLOW;
+            System.out.println("Yellow");
             LEDS.setColor(0.69);
         } else {
             tempColor = ColorState.UKNOWN;
+            System.out.println("Unknown");
             LEDS.setColor(0.41);  
     }
         SmartDashboard.putNumber("Match Con", match.confidence);

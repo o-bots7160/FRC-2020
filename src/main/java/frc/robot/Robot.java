@@ -36,54 +36,67 @@ public class Robot extends TimedRobot {
     private WestCoastDrive _drive;
     private Led LEDS = new Led();
     private Lift_Leveler liftLeveler;
-    //----------------------//
-
-    private double RPM = 1000.0d;
-    //BallShooter shooter = new BallShooter( LEDS );
-    
+    //----------------------//    
 
     @Override
     public void robotInit() {
-      //limeLight.lightOff();
-      //autontimer.reset();
+      
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
-      limeLight = new Limelight();
-      ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2);
+      limeLight = new Limelight( DRIVEJOY, MINIPJOY_1, MINIPJOY_2, shooter );
+      ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
       liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
     }
 
     @Override
     public void robotPeriodic() {
-      
+      ballHandler.robotPeriodic();
     }
 
     @Override
     public void autonomousInit() {
+      autonTimer.reset();
       autonTimer.start();
+      ballHandler.setBrakeMode();
+      shooter.autonomousInit();
+      _drive.autonomousInit();
+      limeLight.lightOn();
     }
 
     @Override
-    public void autonomousPeriodic() {
-      _drive.autonomousPeriodic();
-      shooter.autonomousPeriodic();
-      ballHandler.autonomousPeriodic();
+    public void autonomousPeriodic(){ 
+        limeLight.lightOn();
+        limeLight.limePeriodic();
+        if(autonTimer.get() <= 5){
+            limeLight.realClose();
+            shooter.autonomousPeriodic();
+            ballHandler.autonomousPeriodic();
+        }else{
+            limeLight.frontPanel();
+            _drive.autonomousPeriodic();
+            ballHandler.autonomousPeriodic();
+            shooter.autonomousPeriodic();
+        }
       LEDS.setColor(0.41);
     }
 
     @Override
     public void teleopInit() {
+      ballHandler.setBrakeMode();
+      _drive.teleopInit();
       spinner.teleopInit();
-      shooter.setRPM(3300);
+      shooter.setRPM(3100);
     }
 
     @Override
     public void teleopPeriodic() {
 
-      if(driverStation.getMatchTime() <= 45.0d){
+      if(ballHandler.readyforball()){
+        //LEDS.setColor(0.77);
+      }else if(driverStation.getMatchTime() <= 45.0d){
         LEDS.setColor(0.61);
-      }else{
+      } else {
         LEDS.setColor(0.41);
       }
       
@@ -92,15 +105,28 @@ public class Robot extends TimedRobot {
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
       spinner.teleopPeriodic();
+      limeLight.limePeriodic();
+      
       
       SmartDashboard.putNumber("RPM", shooter.getCurrentRPM());
+      
 
     }
 
-    
+    public void disabledInit(){
+      ballHandler.setCoastMode();
+      _drive.disabledInit();
+      shooter.disabledInit();
+      limeLight.lightOff();
+
+    }
+
+    public void testInit(){
+      _drive.testInit();
+    }
 
     public void testPeriodic(){
-        liftLeveler.telopPeriodic();
+        _drive.testing();
     }
 
 }
