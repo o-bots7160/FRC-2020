@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Joystick;
   public void limePeriodic() {
 
     Update_Limelight_Tracking();
+    lightOn();
 
         
           if(DRIVEJOY.getRawButton(InputMap.REALCLOSE_PIPE)){

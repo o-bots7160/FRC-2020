@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic(){ 
         limeLight.lightOn();
         limeLight.limePeriodic();
-        if(autonTimer.get() <= 5){
+        if(autonTimer.get() <= 4){
             limeLight.realClose();
             shooter.autonomousPeriodic();
             ballHandler.autonomousPeriodic();
@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
       _drive.teleopInit();
       spinner.teleopInit();
       shooter.setRPM(3100);
+      limeLight.lightOn();
     }
 
     @Override

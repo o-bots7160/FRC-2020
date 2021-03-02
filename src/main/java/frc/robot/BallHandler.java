@@ -82,12 +82,12 @@ import edu.wpi.first.wpilibj.Timer;
 
 	public void autonomousPeriodic(){
 		if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 5 ) ) {
-			_lowFeed.set( 1.0d );
-			_upFeed.set ( 0.95d );
+			_lowFeed.set( 1.0d);
+			_upFeed.set ( 0.95d - .25d);
         } else if ( ( autonTimer.get() >= 5 ) && ( autonTimer.get() <= 15 ) ) {
 			_intake.set ( 0.35d );
-			_lowFeed.set( 1.0d );
-			_upFeed.set ( 0.95d );
+			_lowFeed.set( 0.95d);
+			_upFeed.set ( 0.90d);
 		} else {
 			_intake.set ( 0.0d );
 			_lowFeed.set( 0.0d );

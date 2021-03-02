@@ -61,8 +61,10 @@ class BallShooter{
    }
 
    public void autonomousPeriodic (){
-      if(autonTimer.get() <= 14.9){
-        _shotMain.set( 0.53);
+      if(autonTimer.get() < 6.0d){
+        _shotMain.set( 0.53d);
+      }else if(autonTimer.get() >= 6.0d && autonTimer.get() < 14.9d){
+        _shotMain.set( 0.55d );
       }else{
         _shotMain.set(0.0d);
       }

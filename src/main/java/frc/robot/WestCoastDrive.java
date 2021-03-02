@@ -127,7 +127,7 @@ class WestCoastDrive {
                 }
             }else{
                 if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
                     arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
                     driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
                 }
