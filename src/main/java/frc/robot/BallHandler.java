@@ -205,8 +205,8 @@ import edu.wpi.first.wpilibj.Timer;
 		}
 	}
 	private void telopShoot() {
-		_upFeed.set ( 0.20d );
-		_lowFeed.set( 0.15d  );
+		_upFeed.set ( 0.15d );
+		_lowFeed.set( 0.10d  );
 		_intake.set ( 0.0d  );
 	}
 	public void telopInit(){
