@@ -130,11 +130,13 @@ public class Robot extends TimedRobot {
         limeLight.realClose();
     }
 
+    private Timer shotTimer = new Timer();
+
     public void testPeriodic(){
 
       _drive.shootingChallenge();
-      shooter.shootingChallenge();
-      ballHandler.shootingChallenge();
+      shooter.shootingChallenge(shotTimer);
+      ballHandler.shootingChallenge(shooter.firstShoot, shotTimer);
 
       switch(Robot.getAutoModes()){
 
@@ -145,6 +147,10 @@ public class Robot extends TimedRobot {
         break;
 
         case SHOOT:
+        limeLight.limePeriodic();
+        break;
+
+        case FORWARD:
         limeLight.limePeriodic();
         break;
 

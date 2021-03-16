@@ -33,7 +33,7 @@ class BallShooter{
     private Joystick DRIVEJOY;
     private Timer autonTimer;
     private SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
-    private boolean limeControl = false;
+    public boolean limeControl = false;
     
     
     // Sets up the motor controller for use
@@ -157,8 +157,10 @@ class BallShooter{
     _turret.setNeutralMode(NeutralMode.Coast);
   }
 
+  private boolean isShooting = true;
+  public boolean firstShoot = true;
 
-  public void shootingChallenge(){
+  public void shootingChallenge(Timer shotTimer){
     
     switch(Robot.getAutoModes()){
       case INDEX:
@@ -170,13 +172,35 @@ class BallShooter{
       break;
 
       case SHOOT:
-        limeControl = true;
-        _shotMain.set(shootPower);
+        if (isShooting){
+          isShooting = false;
+          shotTimer.start();
+        }
+        if(firstShoot){
+          limeControl = true;
+          if(shotTimer.get() <= 4){
+            _shotMain.set(shootPower);
+          }else{
+            firstShoot = false;
+          }
+
+        }else{
+          if(!(shotTimer.get() <= 3)){
+            _shotMain.set(0.0);
+            limeControl = false;
+            isShooting = true;
+            shotTimer.stop();
+            shotTimer.reset();
+            Robot.mode = Robot.AutoModes.BACKWARD;
+          }
+        }
       break;
 
-      case BACKWARD:
-      _shotMain.set(0.0);
-      //_turret.set(0.0);
+      case FORWARD:
+      
+      limeControl = true;
+      _shotMain.set(shootPower);
+
       break;
     }
 

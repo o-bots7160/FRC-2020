@@ -240,7 +240,7 @@ import edu.wpi.first.wpilibj.Timer;
 		}
 
 
-		public void shootingChallenge(){
+		public void shootingChallenge(boolean firstShoot, Timer shotTimer){
 			switch(Robot.getAutoModes()){
 				case INDEX: 
 				if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
@@ -250,8 +250,19 @@ import edu.wpi.first.wpilibj.Timer;
 				break;
 
 				case SHOOT:
-				_upFeed.set ( 0.95d );
-				_lowFeed.set( 0.9d  );
+
+				if(firstShoot){
+					if(shotTimer.get() <= 1){
+						_upFeed.set ( 0.0d );
+						_lowFeed.set( 0.0d  );
+					}else{
+						_upFeed.set ( 0.95d );
+						_lowFeed.set( 0.9d  );
+					}
+				}else{
+					_upFeed.set ( 0.95d );
+					_lowFeed.set( 0.9d  );
+				}
 				break;
 				case FORWARD:
 				_upFeed.set ( 0.0 );
