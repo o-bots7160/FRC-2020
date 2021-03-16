@@ -128,11 +128,18 @@ public class Robot extends TimedRobot {
         mode = AutoModes.SHOOT;
         limeLight.lightOn();
         limeLight.realClose();
+        _drive.shootingChallengeInit();
+        shooter.shootingChallengeInit();
+        shotTimer.reset();
     }
 
     private Timer shotTimer = new Timer();
 
     public void testPeriodic(){
+
+      System.out.println(mode);
+
+      _drive.printRightEncoder();
 
       _drive.shootingChallenge();
       shooter.shootingChallenge(shotTimer);
@@ -142,7 +149,7 @@ public class Robot extends TimedRobot {
 
         case INDEX:
         if(MINIPJOY_1.getRawButton(1) && MINIPJOY_2.getRawButton(1) ){
-          Robot.mode = Robot.AutoModes.FORWARD;
+          Robot.mode = Robot.AutoModes.BACKWARD;
         }
         break;
 

@@ -32,10 +32,9 @@ import edu.wpi.first.wpilibj.Joystick;
             behindPanel();
           }
             
-          //System.out.println(m_LimelightHasValidTarget);
 
             if (m_LimelightHasValidTarget && _turret.limeControl){
-              System.out.println(m_LimelightSteerCommand);
+              
                 _turret.turretTurn(-m_LimelightSteerCommand); 
            } else {
                 _turret.turretTurn(0.0);

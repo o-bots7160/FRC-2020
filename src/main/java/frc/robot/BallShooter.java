@@ -25,7 +25,7 @@ class BallShooter{
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    private double shootPower= 0.42d;
+    private double shootPower= 0.5d;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;
@@ -160,6 +160,12 @@ class BallShooter{
   private boolean isShooting = true;
   public boolean firstShoot = true;
 
+  public void shootingChallengeInit(){
+      isShooting = true;
+      firstShoot = true;
+  }
+
+ 
   public void shootingChallenge(Timer shotTimer){
     
     switch(Robot.getAutoModes()){
@@ -191,12 +197,12 @@ class BallShooter{
             isShooting = true;
             shotTimer.stop();
             shotTimer.reset();
-            Robot.mode = Robot.AutoModes.BACKWARD;
+            Robot.mode = Robot.AutoModes.FORWARD;
           }
         }
       break;
 
-      case FORWARD:
+      case BACKWARD:
       
       limeControl = true;
       _shotMain.set(shootPower);

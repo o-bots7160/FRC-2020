@@ -244,8 +244,14 @@ import edu.wpi.first.wpilibj.Timer;
 			switch(Robot.getAutoModes()){
 				case INDEX: 
 				if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
-					_upFeed.set ( -0.75  );
-					_lowFeed.set( -0.85  );
+					_upFeed.set ( -0.75d  );
+					_lowFeed.set( -0.85d  );
+					_intake.set ( -0.90d  );
+				
+				}else{
+					_upFeed.set ( 0.0d  );
+					_lowFeed.set( 0.0d  );
+					_intake.set(  0.0d  );
 				}
 				break;
 
@@ -264,6 +270,7 @@ import edu.wpi.first.wpilibj.Timer;
 					_lowFeed.set( 0.9d  );
 				}
 				break;
+
 				case FORWARD:
 				_upFeed.set ( 0.0 );
 				_lowFeed.set( 0.0  );

@@ -243,30 +243,56 @@ class WestCoastDrive {
         }*/
     }
 
+    public void printRightEncoder(){
+        System.out.println(_rghtMain.getSelectedSensorPosition());
+    }
+
+    public void shootingChallengeInit(){
+        _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
+        _rghtFol1.follow(_rghtMain);
+        _leftFol1.follow(_leftFol1);
+        //_rghtFol1.setNeutralMode(NeutralMode.Brake);
+        //_leftFol1.setNeutralMode(NeutralMode.Brake);
+    }
+  
+
     public void shootingChallenge(){
 
         switch(Robot.getAutoModes()){
 
+
+            case INDEX:
+            arcadeDrive(0.0, 0.0);
+            resetRightMotor();
+            break;
+            case SHOOT:
+            arcadeDrive(0.0, 0.0);
+            resetRightMotor();
+            break;
+
             case FORWARD:
-                if(_rghtMain.getSelectedSensorPosition() >= -126995){
+                if(_rghtMain.getSelectedSensorPosition() >= -75000){
                     arcadeDrive(0.56, rotRate);
-                    SmartDashboard.putString("Driving: ", "Driving");
-                }else{
-                    SmartDashboard.putString("Driving: ", "DEAD!");
-                    arcadeDrive(0.0, 0.0);
-                    resetRightMotor();
-                    Robot.mode = Robot.AutoModes.SHOOT;
-                }
-                break;
-            case BACKWARD:
-                if(_rghtMain.getSelectedSensorPosition() <= 126995){
-                    arcadeDrive(-0.56, rotRate);
+                    System.out.println(_rghtMain.getSelectedSensorPosition());
                     SmartDashboard.putString("Driving: ", "Driving");
                 }else{
                     SmartDashboard.putString("Driving: ", "DEAD!");
                     arcadeDrive(0.0, 0.0);
                     resetRightMotor();
                     Robot.mode = Robot.AutoModes.INDEX;
+                }
+                break;
+            case BACKWARD:
+                if(_rghtMain.getSelectedSensorPosition() <= 75000){
+                    arcadeDrive(-0.56, rotRate);
+                    SmartDashboard.putString("Driving: ", "Driving");
+                }else{
+                    SmartDashboard.putString("Driving: ", "DEAD!");
+                    arcadeDrive(0.0, 0.0);
+                    resetRightMotor();
+                    Robot.mode = Robot.AutoModes.SHOOT;
                 }
                 break;
 
