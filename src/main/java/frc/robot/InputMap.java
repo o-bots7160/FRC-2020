@@ -9,8 +9,8 @@ public class InputMap{
     //public static final int 
 
     // Speeds
-    public static final double SPEED_Y          = 0.85d;
-    public static final double SPEED_Z          = 0.75d;
+    public static final double SPEED_Y          = 0.5d;
+    public static final double SPEED_Z          = 0.5d;
     //
 
     // Drive joy axises
@@ -28,6 +28,7 @@ public class InputMap{
     public static final int REALCLOSE_PIPE      =    7;
     public static final int FRONTPANEL_PIPE     =    9;
     public static final int BEHINDPANEL_PIPE    =   11;
+    public static final int FEED_VIA_SHOOTER    =   12;
     //
 
     // MINPJOY_1 joy buttons

@@ -25,7 +25,7 @@ class BallShooter{
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    private double shootPower= 0.65d;
+    private double shootPower= 0.42d;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;
@@ -61,13 +61,17 @@ class BallShooter{
    }
 
    public void autonomousPeriodic (){
-      if(autonTimer.get() < 6.0d){
-        _shotMain.set( 0.53d);
+      /*if(autonTimer.get() < 6.0d){
+        _shotMain.set( 0.53d +.07d);
       }else if(autonTimer.get() >= 6.0d && autonTimer.get() < 14.9d){
         _shotMain.set( 0.55d );
       }else{
         _shotMain.set(0.0d);
-      }
+      }*/
+
+
+
+
    }
 
 
@@ -85,10 +89,13 @@ class BallShooter{
         //SmartDashboard.putNumber("Volt", shootPower);
       
         // Manual shooter
+
         if(MINIPJOY_1.getRawButton(InputMap.SHOOTBUTTON)){
           //percentVoltage = RPMPID.calculate(getCurrentRPM());
 
           _shotMain.set(shootPower);
+        }else if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
+          _shotMain.set(-0.2);
         }else{
           RPMPID.reset();
           _shotMain.set(0.0);
@@ -150,4 +157,28 @@ class BallShooter{
     _turret.setNeutralMode(NeutralMode.Coast);
   }
 
+
+  public void shootingChallenge(){
+    
+    switch(Robot.getAutoModes()){
+      case INDEX:
+      if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
+        _shotMain.set(-0.2);
+      }else{
+        _shotMain.set(0.0);
+      }
+      break;
+
+      case SHOOT:
+        limeControl = true;
+        _shotMain.set(shootPower);
+      break;
+
+      case BACKWARD:
+      _shotMain.set(0.0);
+      //_turret.set(0.0);
+      break;
+    }
+
+  }
 }
