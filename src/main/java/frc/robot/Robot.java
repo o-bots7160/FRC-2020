@@ -38,9 +38,18 @@ public class Robot extends TimedRobot {
     private Lift_Leveler liftLeveler;
     //----------------------//    
 
+    public static enum AutoModes{
+       SHOOT, FORWARD, INDEX, BACKWARD
+    }
+
+    public static AutoModes mode;
+
+    public static AutoModes getAutoModes(){
+      return mode;
+    }
+
     @Override
     public void robotInit() {
-      
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
       limeLight = new Limelight( DRIVEJOY, MINIPJOY_1, MINIPJOY_2, shooter );
@@ -62,23 +71,15 @@ public class Robot extends TimedRobot {
       shooter.autonomousInit();
       _drive.autonomousInit();
       limeLight.lightOn();
+      mode = AutoModes.FORWARD;
     }
 
     @Override
     public void autonomousPeriodic(){ 
         limeLight.lightOn();
         limeLight.limePeriodic();
-        if(autonTimer.get() <= 4){
-            limeLight.realClose();
-            shooter.autonomousPeriodic();
-            ballHandler.autonomousPeriodic();
-        }else{
-            limeLight.frontPanel();
-            _drive.autonomousPeriodic();
-            ballHandler.autonomousPeriodic();
-            shooter.autonomousPeriodic();
-        }
-      LEDS.setColor(0.41);
+        _drive.autonomousPeriodic();
+        
     }
 
     @Override
@@ -123,11 +124,32 @@ public class Robot extends TimedRobot {
     }
 
     public void testInit(){
-      _drive.testInit();
+
+        mode = AutoModes.SHOOT;
+        limeLight.lightOn();
+        limeLight.realClose();
     }
 
     public void testPeriodic(){
-        _drive.testing();
+
+      _drive.shootingChallenge();
+      shooter.shootingChallenge();
+      ballHandler.shootingChallenge();
+
+      switch(Robot.getAutoModes()){
+
+        case INDEX:
+        if(MINIPJOY_1.getRawButton(1) && MINIPJOY_2.getRawButton(1) ){
+          Robot.mode = Robot.AutoModes.FORWARD;
+        }
+        break;
+
+        case SHOOT:
+        limeLight.limePeriodic();
+        break;
+
+      }
+
     }
 
 }

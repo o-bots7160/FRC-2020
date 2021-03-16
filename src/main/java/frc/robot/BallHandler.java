@@ -21,13 +21,13 @@ import edu.wpi.first.wpilibj.Timer;
 	//----------------------------//
 
 	//--------Ball Sensors--------//
-	private final TimeOfFlight ballCollected = new TimeOfFlight( RobotMap._intakeSens );
-	private final TimeOfFlight intakeFull    = new TimeOfFlight( RobotMap._upFeedSens );
+	private final TimeOfFlight _ballCollected = new TimeOfFlight( RobotMap._ballCollected );
+	private final TimeOfFlight _intakeFull    = new TimeOfFlight( RobotMap._intakeFull );
 	//----------------------------//
 
 	private final OnOffDelay ballDelay      = new OnOffDelay( 0.0d, 0.15d );
 	private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
-	private final OnOffDelay shotDelay      = new OnOffDelay( 0.85d, 0.0d );
+	private final OnOffDelay shotDelay      = new OnOffDelay( 1.15d, 0.0d );
   //private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
 	private       double     collectorRange = 0.0d;
 	private       double     intakeRange    = 0.0d;
@@ -40,10 +40,17 @@ import edu.wpi.first.wpilibj.Timer;
 	private Joystick DRIVEJOY;
 	private Timer autonTimer;
 	private Double fastHop = 0.0d;
+	private double ballAmount = 0;
 
 	private enum telopMode{
 		IDLE, ON
 	}
+
+	private enum IntakeMode{
+		INTAKE, UPFEED
+	}
+
+	private IntakeMode intakeMode;
 	private telopMode mode;
 
 	public BallHandler(Timer autonTimer, Joystick MINIPJOY_1, Joystick MINIPJOY_2, Joystick DRIVEJOY) {
@@ -53,13 +60,13 @@ import edu.wpi.first.wpilibj.Timer;
 		this.DRIVEJOY   = DRIVEJOY;
 		_lowFeed.setInverted(true);
 		_upFeed.setInverted(true);
-		ballCollected.setRangingMode( RangingMode.Short, 24.0d );
-		intakeFull.setRangingMode   ( RangingMode.Short, 24.0d );
+		_ballCollected.setRangingMode( RangingMode.Short, 24.0d );
+		_intakeFull.setRangingMode   ( RangingMode.Short, 24.0d );
 		mode = telopMode.ON;
 	}
 	public void robotPeriodic() {
-		collectorRange  = ballCollected.getRange();
-		intakeRange     = intakeFull.getRange();
+		collectorRange  = _ballCollected.getRange();
+		intakeRange     = _intakeFull.getRange();
 
         SmartDashboard.putNumber("Intake", collectorRange );
         SmartDashboard.putNumber("Full", intakeRange);
@@ -80,10 +87,14 @@ import edu.wpi.first.wpilibj.Timer;
 		_upFeed.setIdleMode(IdleMode.kCoast);
 	}
 
+	public void autonomousInit(){
+		
+	}
+
 	public void autonomousPeriodic(){
-		if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 5 ) ) {
+		/*if ( ( autonTimer.get() >= 1 ) && ( autonTimer.get() <= 5 ) ) {
 			_lowFeed.set( 1.0d);
-			_upFeed.set ( 0.95d - .25d);
+			_upFeed.set ( 0.95d);
         } else if ( ( autonTimer.get() >= 5 ) && ( autonTimer.get() <= 15 ) ) {
 			_intake.set ( 0.35d );
 			_lowFeed.set( 0.95d);
@@ -92,8 +103,32 @@ import edu.wpi.first.wpilibj.Timer;
 			_intake.set ( 0.0d );
 			_lowFeed.set( 0.0d );
 			_upFeed.set ( 0.0d );
+		}*/
+
+		switch(Robot.getAutoModes()){
+
+			case INDEX:
+				if(ballAmount != 3){
+					if(_intakeFull.getRange() < 100.0d){
+						_lowFeed.set(0.35d);
+						_upFeed.set(0.3d);
+						_intake.set(0.0d);
+					}
+				}else{
+					_intake.set(0.0d);
+					_lowFeed.set(0.0d);
+					_upFeed.set(0.0d);
+					Robot.mode = Robot.AutoModes.FORWARD;
+				}
+				break;
+
 		}
 
+
+	}
+
+	private void autoIntake(){
+		
 	}
 
 	private void telopManualControl() {
@@ -170,12 +205,12 @@ import edu.wpi.first.wpilibj.Timer;
 		}
 	}
 	private void telopShoot() {
-		_upFeed.set ( 0.95d );
-		_lowFeed.set( 0.9d  );
+		_upFeed.set ( 0.20d );
+		_lowFeed.set( 0.15d  );
 		_intake.set ( 0.0d  );
 	}
 	public void telopInit(){
-		mode = telopMode.IDLE;
+		mode = telopMode.ON;
 	}
 	public void telopPeriodic(){
 		//
@@ -202,5 +237,30 @@ import edu.wpi.first.wpilibj.Timer;
 		public boolean readyforball (){
 			return(!full && !newBall);
 
+		}
+
+
+		public void shootingChallenge(){
+			switch(Robot.getAutoModes()){
+				case INDEX: 
+				if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
+					_upFeed.set ( -0.75  );
+					_lowFeed.set( -0.85  );
+				}
+				break;
+
+				case SHOOT:
+				_upFeed.set ( 0.95d );
+				_lowFeed.set( 0.9d  );
+				break;
+				case FORWARD:
+				_upFeed.set ( 0.0 );
+				_lowFeed.set( 0.0  );
+				break;
+				case BACKWARD:
+				_upFeed.set ( 0.0 );
+				_lowFeed.set( 0.0  );
+				break;
+			}
 		}
 }
