@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
 
     public void testPeriodic(){
 
-      System.out.println(mode);
+      //System.out.println(mode);
 
       _drive.printRightEncoder();
 
@@ -148,16 +148,25 @@ public class Robot extends TimedRobot {
       switch(Robot.getAutoModes()){
 
         case INDEX:
+        LEDS.setColor(0.71);
         if(MINIPJOY_1.getRawButton(1) && MINIPJOY_2.getRawButton(1) ){
           Robot.mode = Robot.AutoModes.BACKWARD;
         }
         break;
 
         case SHOOT:
+        LEDS.setColor(0.61);
         limeLight.limePeriodic();
         break;
 
         case FORWARD:
+        LEDS.setColor(0.91);
+        //limeLight.limePeriodic();
+        
+        break;
+
+        case BACKWARD:
+        LEDS.setColor(0.91);
         limeLight.limePeriodic();
         break;
 

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 	private final CANSparkMax   _lowFeed = new CANSparkMax(   RobotMap._lowFeed, MotorType.kBrushless);
 	private final CANSparkMax   _upFeed  = new CANSparkMax(   RobotMap._upFeed,  MotorType.kBrushless);
 	private final WPI_VictorSPX _intake  = new WPI_VictorSPX( RobotMap._intake );
+	private final Timer powerPortTimer = new Timer();
 	//----------------------------//
 
 	//--------Ball Sensors--------//
@@ -246,7 +247,7 @@ import edu.wpi.first.wpilibj.Timer;
 				if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
 					_upFeed.set ( -0.75d  );
 					_lowFeed.set( -0.85d  );
-					_intake.set ( -0.90d  );
+					_intake.set ( -1.0d  );
 				
 				}else{
 					_upFeed.set ( 0.0d  );
@@ -260,14 +261,17 @@ import edu.wpi.first.wpilibj.Timer;
 				if(firstShoot){
 					if(shotTimer.get() <= 1){
 						_upFeed.set ( 0.0d );
-						_lowFeed.set( 0.0d  );
+						_lowFeed.set( 0.0d );
 					}else{
-						_upFeed.set ( 0.95d );
-						_lowFeed.set( 0.9d  );
+						_upFeed.set ( 0.53d );
+						_lowFeed.set( 0.47d );
 					}
 				}else{
-					_upFeed.set ( 0.95d );
-					_lowFeed.set( 0.9d  );
+					//if(powerPortTimer.get() >= 3){
+					//System.out.println("powerPortTimer");
+					_upFeed.set ( 0.53d );
+					_lowFeed.set( 0.47d );
+				//}
 				}
 				break;
 
@@ -276,6 +280,7 @@ import edu.wpi.first.wpilibj.Timer;
 				_lowFeed.set( 0.0  );
 				break;
 				case BACKWARD:
+				//powerPortTimer.reset();
 				_upFeed.set ( 0.0 );
 				_lowFeed.set( 0.0  );
 				break;

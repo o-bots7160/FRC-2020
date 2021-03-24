@@ -3,11 +3,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Timer;
 
 class OnOffDelay {
-        private final Timer   timer     = new Timer();
-	private       boolean real      = false;
-	private       boolean filtered  = false;
-        private       double  on_delay;
-        private       double  off_delay;
+    private final Timer   timer     = new Timer();
+    private       boolean real      = false;
+    private       boolean filtered  = false;
+    private       double  on_delay;
+    private       double  off_delay;
 
 	public OnOffDelay( double on_delay, double off_delay ) {
 		this.on_delay  = on_delay;
@@ -29,7 +29,7 @@ class OnOffDelay {
 				if ( timer.hasElapsed( on_delay ) ) {
 					filtered = true;
 					timer.stop();
-                                }
+				}
 			} else {
 				timer.reset();
 				timer.start();

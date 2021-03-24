@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class BallShooter{
 
@@ -17,15 +18,15 @@ class BallShooter{
     private WPI_TalonSRX _turret = new WPI_TalonSRX(RobotMap._turret );
     
     // PID
-    private final double kP = 0.0035;
-    private final double kI = 0.000000;
+    private final double kP = 0.0035;             
+    private final double kI = 0.00;
     private final double kD = 0;
     private PIDController RPMPID = new PIDController(kP, kI, kD);
 
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    private double shootPower= 0.5d;
+    private double shootPower= 0.435d;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;
@@ -167,11 +168,13 @@ class BallShooter{
 
  
   public void shootingChallenge(Timer shotTimer){
+    SmartDashboard.putNumber("RPM", getCurrentRPM());
+    //SmartDashboard.putNumber("Control Value", percentVoltage);
     
     switch(Robot.getAutoModes()){
       case INDEX:
       if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
-        _shotMain.set(-0.2);
+        _shotMain.set(-0.25);
       }else{
         _shotMain.set(0.0);
       }
@@ -179,12 +182,16 @@ class BallShooter{
 
       case SHOOT:
         if (isShooting){
+          //RPMPID.reset();
+          //setRPM(2250.0d);
           isShooting = false;
           shotTimer.start();
         }
         if(firstShoot){
           limeControl = true;
           if(shotTimer.get() <= 4){
+           // percentVoltage = RPMPID.calculate(getCurrentRPM());
+           // _shotMain.set(percentVoltage);
             _shotMain.set(shootPower);
           }else{
             firstShoot = false;
@@ -192,8 +199,9 @@ class BallShooter{
 
         }else{
           if(!(shotTimer.get() <= 3)){
-            _shotMain.set(0.0);
-            limeControl = false;
+            stop();
+                  //_shotMain.set(0.0);
+           //limeControl = false;
             isShooting = true;
             shotTimer.stop();
             shotTimer.reset();
@@ -205,7 +213,14 @@ class BallShooter{
       case BACKWARD:
       
       limeControl = true;
+      //setRPM(2250.0d);
       _shotMain.set(shootPower);
+      
+
+      break;
+
+      case FORWARD:
+      _turret.set( 0.0d );
 
       break;
     }

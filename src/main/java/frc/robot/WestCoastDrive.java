@@ -21,7 +21,7 @@ import com.ctre.phoenix.music.Orchestra;
 import com.kauailabs.navx.frc.AHRS;
 
 class WestCoastDrive {
-    private final double kP                            = 0.06d;
+    private final double kP                            = 0.05d;
     private final double kI                            = 0.0d;
     private final double kD                            = 0.0d;
     private AHRS navX;
@@ -29,13 +29,14 @@ class WestCoastDrive {
     //private final Timer autonTimer;
 
     private final ADXRS450_Gyro gyro                  = new ADXRS450_Gyro( );
-    private final PIDController anglePID              = new PIDController(kP, kI, kD);
     private final WPI_TalonFX _rghtMain               = new WPI_TalonFX(RobotMap._rghtMain);
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
     private final WPI_TalonFX _leftMain               = new WPI_TalonFX(RobotMap._leftMain);
     private final WPI_TalonFX _leftFol1               = new WPI_TalonFX(RobotMap._leftFol1);
 
     private double rotRate = 0.0d;
+
+    PIDController calcRotRate = new PIDController(kP, kI, kD);
 
     private Joystick driveJoy;
 
@@ -60,8 +61,13 @@ class WestCoastDrive {
         _leftMain.setInverted( false );
         _rghtMain.configOpenloopRamp(2);
         _leftMain.configOpenloopRamp(2);
-        anglePID.setTolerance( 1.0d );
+        //anglePID.setTolerance( 1.0d );
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
+        _rghtMain.configFactoryDefault();
+        _rghtFol1.configFactoryDefault();
+        _leftMain.configFactoryDefault();
+        _leftFol1.configFactoryDefault();
+
 
         gyro.calibrate();
      }
@@ -82,7 +88,7 @@ class WestCoastDrive {
         _rghtFol1.setNeutralMode(NeutralMode.Brake);
         _leftFol1.setNeutralMode(NeutralMode.Brake);
         navX.reset();
-        anglePID.reset();
+        //anglePID.reset();
     }
     public void autonomousPeriodic() {
 
@@ -107,6 +113,8 @@ class WestCoastDrive {
     }
     public void teleopInit() {
         navX.zeroYaw();
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
     }
     public void teleopPeriodic() {
 
@@ -149,11 +157,24 @@ class WestCoastDrive {
                     driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
 
             */
-                    if(InputMap.DeadBand(0.2d, driveJoy.getY()) ||
-                    InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                        arcadeDrive(-driveJoy.getY() * InputMap.SPEED_Y,
-                        driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+            
+
+        if(driveJoy.getRawButton(2)){
+            if(InputMap.DeadBand(0.2d, driveJoy.getY()) ||
+            InputMap.DeadBand(0.40d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                arcadeDrive(-driveJoy.getY() * InputMap.SPEED_Y  + 0.15,
+                driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+            }
+        }else{
+            if(InputMap.DeadBand(0.2d, driveJoy.getY()) ||
+            InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
+                arcadeDrive(-driveJoy.getY() * (InputMap.SPEED_Y),
+                driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+            }
         }
+
+        
+
     }
     
     /*
@@ -186,9 +207,9 @@ class WestCoastDrive {
     public void testInit(){
         tempTimer.reset();
         tempTimer.start();
-        anglePID.reset();
+        //anglePID.reset();
         navX.reset();
-        anglePID.setSetpoint(0.0);
+       // anglePID.setSetpoint(0.0);
         /* A list of TalonFX's that are to be used as instruments */
         ArrayList<TalonFX> _instruments = new ArrayList<TalonFX>();
       
@@ -244,7 +265,7 @@ class WestCoastDrive {
     }
 
     public void printRightEncoder(){
-        System.out.println(_rghtMain.getSelectedSensorPosition());
+        //System.out.println(_rghtMain.getSelectedSensorPosition());
     }
 
     public void shootingChallengeInit(){
@@ -253,29 +274,45 @@ class WestCoastDrive {
         _leftMain.setNeutralMode(NeutralMode.Brake);
         _rghtFol1.follow(_rghtMain);
         _leftFol1.follow(_leftFol1);
+        calcRotRate.reset();
+        calcRotRate.setSetpoint( 0.0d );
+        navX.reset();
         //_rghtFol1.setNeutralMode(NeutralMode.Brake);
         //_leftFol1.setNeutralMode(NeutralMode.Brake);
+    }
+    private double getRotRate(){
+        double currentAngle = navX.getAngle();
+        rotRate = calcRotRate.calculate(currentAngle);
+        System.out.println("Gyro Angle: " + currentAngle);
+        System.out.println("RotRate Adjust: " + rotRate);
+        
+        return rotRate;
+    
     }
   
 
     public void shootingChallenge(){
 
+        
+
         switch(Robot.getAutoModes()){
 
 
             case INDEX:
+            calcRotRate.reset();
             arcadeDrive(0.0, 0.0);
             resetRightMotor();
             break;
             case SHOOT:
+            calcRotRate.reset();
             arcadeDrive(0.0, 0.0);
             resetRightMotor();
             break;
 
             case FORWARD:
-                if(_rghtMain.getSelectedSensorPosition() >= -75000){
-                    arcadeDrive(0.56, rotRate);
-                    System.out.println(_rghtMain.getSelectedSensorPosition());
+                if(_rghtMain.getSelectedSensorPosition() >= -91500){
+                    arcadeDrive(0.56, getRotRate());
+                    //System.out.println(_rghtMain.getSelectedSensorPosition());
                     SmartDashboard.putString("Driving: ", "Driving");
                 }else{
                     SmartDashboard.putString("Driving: ", "DEAD!");
@@ -285,8 +322,8 @@ class WestCoastDrive {
                 }
                 break;
             case BACKWARD:
-                if(_rghtMain.getSelectedSensorPosition() <= 75000){
-                    arcadeDrive(-0.56, rotRate);
+                if(_rghtMain.getSelectedSensorPosition() <= 91500){
+                    arcadeDrive(-0.56, getRotRate());
                     SmartDashboard.putString("Driving: ", "Driving");
                 }else{
                     SmartDashboard.putString("Driving: ", "DEAD!");

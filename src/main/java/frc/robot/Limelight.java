@@ -71,11 +71,11 @@ import edu.wpi.first.wpilibj.Joystick;
   public void Update_Limelight_Tracking()
   {
         // These numbers must be tuned for your Robot!  Be careful!
-        final double TURN_K = 0.0225;                     // how hard to turn toward the target
+        final double TURN_K = 0.03;                     // how hard to turn toward the target 0.0225
         final double RIGHT_MAX = 0.4;                   // Max speed the turret motor can go
         final double LEFT_MAX = -0.4;
-        final double RIGHT_MIN = 0.04;
-        final double LEFT_MIN = -0.04;
+        final double RIGHT_MIN = 0.06;
+        final double LEFT_MIN = -0.06;
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
