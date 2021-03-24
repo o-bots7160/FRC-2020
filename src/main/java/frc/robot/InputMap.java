@@ -9,7 +9,7 @@ public class InputMap{
     //public static final int 
 
     // Speeds
-    public static final double SPEED_Y          = 0.5d;
+    public static final double SPEED_Y          = 0.63d;
     public static final double SPEED_Z          = 0.5d;
     //
 

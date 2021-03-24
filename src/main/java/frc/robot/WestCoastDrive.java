@@ -51,6 +51,10 @@ class WestCoastDrive {
 
 
         this.driveJoy = driveJoy;
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
+        _rghtFol1.setNeutralMode(NeutralMode.Brake);
+        _leftFol1.setNeutralMode(NeutralMode.Brake);
 
         //this.autonTimer = autonTimer;
         _rghtFol1.follow( _rghtMain  );
