@@ -9,7 +9,7 @@ public class InputMap{
     //public static final int 
 
     // Speeds
-    public static final double SPEED_Y          = 0.5d;
+    public static final double SPEED_Y          = 0.67d;
     public static final double SPEED_Z          = 0.5d;
     //
 
@@ -22,8 +22,8 @@ public class InputMap{
 
     // DRIVEJOY buttons
     public static final int ENGAGE_INTAKE       =    1;
-    public static final int ENGAGE_RATCHET      =    3;
-    public static final int DISENGAGE_RATCHET   =    4;
+    public static final int ENGAGE_RATCHET      =    5;
+    public static final int DISENGAGE_RATCHET   =    6;
     public static final int LIMELIGHT_TARGET    =    5;
     public static final int REALCLOSE_PIPE      =    7;
     public static final int FRONTPANEL_PIPE     =    9;

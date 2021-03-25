@@ -25,7 +25,8 @@ class BallShooter{
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    private double shootPower= 0.442d;
+    // green .4 yellow .4 blue .38 red .4
+    private double shootPower = 0.4d;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;

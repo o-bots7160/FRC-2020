@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
     private Spinner spinner;
     private Limelight limeLight;
     private WestCoastDrive _drive;
-    private Led LEDS = new Led();
+    //private Led LEDS = new Led();
     private Lift_Leveler liftLeveler;
     //----------------------//    
 
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
       shooter = new BallShooter(autonTimer , MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
-      spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
+      //spinner = new Spinner( LEDS , MINIPJOY_1, MINIPJOY_2 );
       limeLight = new Limelight( DRIVEJOY, MINIPJOY_1, MINIPJOY_2, shooter );
       ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
       ballHandler.setBrakeMode();
       _drive.teleopInit();
-      spinner.teleopInit();
+      //spinner.teleopInit();
       shooter.setRPM(3100);
       limeLight.lightOn();
     }
@@ -97,16 +97,16 @@ public class Robot extends TimedRobot {
       if(ballHandler.readyforball()){
         //LEDS.setColor(0.77);
       }else if(driverStation.getMatchTime() <= 45.0d){
-        LEDS.setColor(0.61);
+        //LEDS.setColor(0.61);
       } else {
-        LEDS.setColor(0.41);
+        //LEDS.setColor(0.41);
       }
       
       _drive.teleopPeriodic();
       shooter.teleopPeriodic();
       ballHandler.telopPeriodic();
       liftLeveler.telopPeriodic();
-      spinner.teleopPeriodic();
+      //spinner.teleopPeriodic();
       limeLight.limePeriodic();
       
       

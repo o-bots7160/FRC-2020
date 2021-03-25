@@ -14,7 +14,7 @@ public class Lift_Leveler{
     private Joystick DRIVEJOY;
     private WPI_TalonFX Lift = new WPI_TalonFX(RobotMap._endLift);
     private WPI_VictorSPX Levler = new WPI_VictorSPX(RobotMap._leveler);
-    private Servo endLiftServo = new Servo(RobotMap._endLiftServo);
+    //private Servo endLiftServo = new Servo(RobotMap._endLiftServo);
     private boolean liftAble = true;
     private DriverStation station;
 
@@ -55,10 +55,10 @@ public class Lift_Leveler{
         // END LIFT SERVO
         if(DRIVEJOY.getRawButton(InputMap.ENGAGE_RATCHET)){
             liftAble = false;
-            endLiftServo.set(0.03);
+            //endLiftServo.set(0.03);
         }else if(DRIVEJOY.getRawButton(InputMap.DISENGAGE_RATCHET)){
             liftAble = true;
-            endLiftServo.set(0.0);
+            //endLiftServo.set(0.0);
         }
 
     }

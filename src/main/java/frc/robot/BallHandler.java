@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
 
@@ -24,6 +25,11 @@ import edu.wpi.first.wpilibj.Timer;
 	private final TimeOfFlight _ballCollected = new TimeOfFlight( RobotMap._ballCollected );
 	private final TimeOfFlight _intakeFull    = new TimeOfFlight( RobotMap._intakeFull );
 	//----------------------------//
+
+	//----------Actuator----------//
+	private Servo hoodActuator = new Servo(9);
+	//----------------------------//
+
 
 	private final OnOffDelay ballDelay      = new OnOffDelay( 0.0d, 0.15d );
 	private final OnOffDelay fullDelay      = new OnOffDelay( 0.25d, 0.0d );
@@ -63,6 +69,8 @@ import edu.wpi.first.wpilibj.Timer;
 		_ballCollected.setRangingMode( RangingMode.Short, 24.0d );
 		_intakeFull.setRangingMode   ( RangingMode.Short, 24.0d );
 		mode = telopMode.ON;
+		hoodActuator.setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
+    	hoodActuator.setSpeed(1.0);
 	}
 	public void robotPeriodic() {
 		collectorRange  = _ballCollected.getRange();
@@ -205,8 +213,8 @@ import edu.wpi.first.wpilibj.Timer;
 		}
 	}
 	private void telopShoot() {
-		_upFeed.set ( 0.15d );
-		_lowFeed.set( 0.10d  );
+		_upFeed.set ( 0.2d );
+		_lowFeed.set( 0.2d  );
 		_intake.set ( 0.0d  );
 	}
 	public void telopInit(){
@@ -217,6 +225,17 @@ import edu.wpi.first.wpilibj.Timer;
 		//  Need to determine if we are switching modes
 		//
 		//
+
+		if(DRIVEJOY.getRawButton(3)) {
+			// close servo
+			hoodActuator.setSpeed(-1.0);
+			hoodActuator.setPosition(0.17);
+		} else if(DRIVEJOY.getRawButton(4)) {
+			 // open servo
+			hoodActuator.setSpeed(1.0);
+			 hoodActuator.setPosition(0.82);
+		}
+
 		switch ( mode ) {
 			case IDLE:
 				telopManualControl();
@@ -234,22 +253,22 @@ import edu.wpi.first.wpilibj.Timer;
 				break;
 		}
 	}	
-		public boolean readyforball (){
-			return(!full && !newBall);
+	public boolean readyforball (){
+		return(!full && !newBall);
 
-		}
+	}
 
 
-		public void shootingChallenge(){
-			switch(Robot.getAutoModes()){
-				case INDEX: 
+	public void shootingChallenge(){
+		switch(Robot.getAutoModes()){
+			case INDEX: 
 				if (DRIVEJOY.getRawButton( InputMap.FEED_VIA_SHOOTER )) {
 					_upFeed.set ( -0.75  );
 					_lowFeed.set( -0.85  );
 				}
 				break;
 
-				case SHOOT:
+			case SHOOT:
 				_upFeed.set ( 0.95d );
 				_lowFeed.set( 0.9d  );
 				break;

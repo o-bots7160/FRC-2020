@@ -28,7 +28,6 @@ class WestCoastDrive {
     // By seconds
     //private final Timer autonTimer;
 
-    private final ADXRS450_Gyro gyro                  = new ADXRS450_Gyro( );
     private final PIDController anglePID              = new PIDController(kP, kI, kD);
     private final WPI_TalonFX _rghtMain               = new WPI_TalonFX(RobotMap._rghtMain);
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
@@ -63,7 +62,6 @@ class WestCoastDrive {
         anglePID.setTolerance( 1.0d );
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
 
-        gyro.calibrate();
      }
 
      public void resetRightMotor(){
@@ -77,8 +75,6 @@ class WestCoastDrive {
 
     public void autonomousInit() {
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
-        _rghtMain.setNeutralMode(NeutralMode.Brake);
-        _leftMain.setNeutralMode(NeutralMode.Brake);
         _rghtFol1.setNeutralMode(NeutralMode.Brake);
         _leftFol1.setNeutralMode(NeutralMode.Brake);
         navX.reset();
@@ -107,6 +103,8 @@ class WestCoastDrive {
     }
     public void teleopInit() {
         navX.zeroYaw();
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
     }
     public void teleopPeriodic() {
 
