@@ -70,6 +70,10 @@ class WestCoastDrive {
         gyro.calibrate();
      }
 
+     public AHRS getNavX(){
+         return navX;
+     }
+
      public void resetRightMotor(){
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
      }

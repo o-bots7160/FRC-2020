@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
       ballHandler = new BallHandler(autonTimer, MINIPJOY_1, MINIPJOY_2, DRIVEJOY);
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
       liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
-      photonVision = new PhotonVision();
+      photonVision = new PhotonVision(_drive);
     }
 
     @Override
@@ -67,21 +67,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-      autonTimer.reset();
-      autonTimer.start();
-      ballHandler.setBrakeMode();
-      shooter.autonomousInit();
-      _drive.autonomousInit();
-      limeLight.lightOn();
-      mode = AutoModes.FORWARD;
     }
 
     @Override
     public void autonomousPeriodic(){ 
-        limeLight.lightOn();
-        limeLight.limePeriodic();
-        _drive.autonomousPeriodic();
-        
+        photonVision.teleopPeriodic();
     }
 
     @Override
