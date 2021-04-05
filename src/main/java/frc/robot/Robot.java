@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
     private Spinner spinner;
     private Limelight limeLight;
     private WestCoastDrive _drive;
-    //private Led LEDS = new Led();
+    private Led LEDS = new Led();
     private Lift_Leveler liftLeveler;
     //----------------------//    
 

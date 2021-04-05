@@ -233,7 +233,7 @@ import edu.wpi.first.wpilibj.Timer;
 		} else if(DRIVEJOY.getRawButton(4)) {
 			 // open servo
 			hoodActuator.setSpeed(1.0);
-			 hoodActuator.setPosition(0.82);
+			 hoodActuator.setPosition(1.00);
 		}
 
 		switch ( mode ) {

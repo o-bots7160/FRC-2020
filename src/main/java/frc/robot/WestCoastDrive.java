@@ -54,6 +54,10 @@ class WestCoastDrive {
         //this.autonTimer = autonTimer;
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
+        _rghtMain.setSafetyEnabled(false);
+        _rghtFol1.setSafetyEnabled(false);
+        _leftMain.setSafetyEnabled(false);
+        _leftFol1.setSafetyEnabled(false);
     
         _rghtMain.setInverted( false  );
         _leftMain.setInverted( false );
@@ -110,7 +114,7 @@ class WestCoastDrive {
 
         SmartDashboard.putNumber("Gyro Reaing", navX.getAngle());
 
-        /* if(driveJoy.getRawButton(2)){
+        if(driveJoy.getRawButton(2)){
 
             if(driveJoy.getRawButton(1)){
                 if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
@@ -140,7 +144,7 @@ class WestCoastDrive {
                     driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
                 }
             }
-            */
+            
            /* if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
                 InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
                     arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,

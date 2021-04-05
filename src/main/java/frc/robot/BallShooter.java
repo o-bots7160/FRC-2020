@@ -25,8 +25,10 @@ class BallShooter{
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    // green .4 yellow .4 blue .38 red .4
-    private double shootPower = 0.4d;
+    // green .4 yellow .4 blue .4 red .4125
+    private double shootPower = 0.395d;
+    private double zoneSwitch = 0.0d;
+    private Led LEDS;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;
@@ -114,6 +116,44 @@ class BallShooter{
         }else{
           limeControl = true;
         }
+        if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){
+              if(zoneSwitch <= 3){
+                zoneSwitch = zoneSwitch + 1.0d;
+              } else {
+                zoneSwitch = 0;
+              }
+              shootPower = 0.4d;
+              System.out.print(shootPower);
+          }
+       /*while(true){
+         if(zoneSwitch == 0){
+          shootPower = 0.4d;
+          LEDS.setColor(0.1);
+        }
+        else if(zoneSwitch == 1){
+          shootPower = 0.4d;
+          LEDS.setColor(0.3);
+        }
+        else if(zoneSwitch == 2){
+          shootPower = 0.38d;
+          LEDS.setColor(0.5);
+        }
+        else{
+          shootPower = 0.4d;
+          LEDS.setColor(0.8);
+        }}*/
+        if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){
+            shootPower = 0.38d;
+            System.out.print(shootPower);
+          }
+        if(MINIPJOY_1.getRawButton(InputMap.LIFT_DOWN)){
+            shootPower = 0.30d;
+            System.out.print(shootPower);
+          }
+        if(MINIPJOY_1.getRawButton(InputMap.LIFT_UP)){
+            shootPower = 0.25d;
+            System.out.print(shootPower);
+          }
 
    }
 
@@ -179,6 +219,9 @@ class BallShooter{
       _shotMain.set(0.0);
       //_turret.set(0.0);
       break;
+
+      
+
     }
 
   }

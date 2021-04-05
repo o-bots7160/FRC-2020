@@ -9,8 +9,8 @@ public class InputMap{
     //public static final int 
 
     // Speeds
-    public static final double SPEED_Y          = 0.67d;
-    public static final double SPEED_Z          = 0.5d;
+    public static final double SPEED_Y          = 0.65d;
+    public static final double SPEED_Z          = 0.53d;
     //
 
     // Drive joy axises
