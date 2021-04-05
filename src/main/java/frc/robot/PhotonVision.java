@@ -14,8 +14,8 @@ class PhotonVision {
     private double x;
     private double area;
     private WestCoastDrive drive;
-    private double kP = 0.02d;
-    private double kI = 0.000005d;
+    private double kP = 0.015d;
+    private double kI = 0.00005d;
     private double kD = 0.0d;
     private PIDController photonAngle = new PIDController(kP, kI, kD);
     private boolean hasTarget = false;
@@ -25,7 +25,7 @@ class PhotonVision {
         camera = new PhotonCamera("Camera");
 
         this.drive = drive;
-        photonAngle.setSetpoint(0);
+        
     }
 
     public void updatePhoton(){
@@ -43,10 +43,10 @@ class PhotonVision {
 
     public void teleopPeriodic(){
         updatePhoton();
+        
+        
 
-        if(hasTarget){
-            drive.arcadeDrive(0, -photonAngle.calculate(x));
-        }
+
     }
 
 }

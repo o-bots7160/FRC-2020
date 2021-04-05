@@ -33,12 +33,12 @@ import edu.wpi.first.wpilibj.Joystick;
           }
             
 
-            if (m_LimelightHasValidTarget && _turret.limeControl){
+            /*if (m_LimelightHasValidTarget && _turret.limeControl){
               
                 _turret.turretTurn(-m_LimelightSteerCommand); 
            } else {
                 _turret.turretTurn(0.0);
-           }
+           }*/
   }
 
   public void lightOn(){

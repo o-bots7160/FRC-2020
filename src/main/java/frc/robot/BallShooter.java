@@ -25,7 +25,8 @@ class BallShooter{
     boolean controlling = false;
   
     double percentVoltage = 0.0;
-    private double shootPower= 0.4375d;
+    // green .4 yellow .4 blue .4 red .4125
+    private double shootPower = 0.395d;
     // Target RPM
     private double targetRPM = 0.d;
     private Joystick MINIPJOY_1;
@@ -33,7 +34,7 @@ class BallShooter{
     private Joystick DRIVEJOY;
     private Timer autonTimer;
     private SupplyCurrentLimitConfiguration config = new SupplyCurrentLimitConfiguration();
-    public boolean limeControl = false;
+    private boolean limeControl = false;
     
     
     // Sets up the motor controller for use
@@ -113,6 +114,14 @@ class BallShooter{
         }else{
           limeControl = true;
         }
+        if(MINIPJOY_1.getRawButton(InputMap.COLOR_4_TIMES)){
+              shootPower = 0.4d;
+              System.out.print(shootPower);
+          }
+        if(MINIPJOY_1.getRawButton(InputMap.COLOR_POSITION)){
+            shootPower = 0.38d;
+            System.out.print(shootPower);
+          }
 
    }
 
@@ -157,16 +166,8 @@ class BallShooter{
     _turret.setNeutralMode(NeutralMode.Coast);
   }
 
-  private boolean isShooting = true;
-  public boolean firstShoot = true;
 
-  public void shootingChallengeInit(){
-      isShooting = true;
-      firstShoot = true;
-  }
-
- 
-  public void shootingChallenge(Timer shotTimer){
+  public void shootingChallenge(){
     
     switch(Robot.getAutoModes()){
       case INDEX:
@@ -178,36 +179,17 @@ class BallShooter{
       break;
 
       case SHOOT:
-        if (isShooting){
-          isShooting = false;
-          shotTimer.start();
-        }
-        if(firstShoot){
-          limeControl = true;
-          if(shotTimer.get() <= 4){
-            _shotMain.set(shootPower);
-          }else{
-            firstShoot = false;
-          }
-
-        }else{
-          if(!(shotTimer.get() <= 3)){
-            _shotMain.set(0.0);
-            limeControl = false;
-            isShooting = true;
-            shotTimer.stop();
-            shotTimer.reset();
-            Robot.mode = Robot.AutoModes.FORWARD;
-          }
-        }
+        limeControl = true;
+        _shotMain.set(shootPower);
       break;
 
       case BACKWARD:
-      
-      limeControl = true;
-      _shotMain.set(shootPower);
-
+      _shotMain.set(0.0);
+      //_turret.set(0.0);
       break;
+
+      
+
     }
 
   }

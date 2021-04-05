@@ -281,4 +281,74 @@ import edu.wpi.first.wpilibj.Timer;
 				break;
 			}
 		}
+
+
+
+		//private boolean grabbedBall = false;
+		
+
+		public boolean hasBall = false;
+		public boolean timerReset = false;
+		public Timer intakeTimer = new Timer();
+		public boolean firstBall = false;
+
+		public void galaticReset(){
+			hasBall = false;
+			newBall = false;
+			timerReset = false;
+			firstBall = false;
+			//intakeTimer.start();
+			intakeTimer.reset();
+			
+		}
+
+		public void getball(){
+
+			//System.out.println(timerReset);
+
+			if ( collectorRange > 100 && !hasBall) {
+				//System.out.println("collect");
+				_upFeed.set ( 0.0d  );
+				_lowFeed.set( 0.0d  );
+				_intake.set ( 0.35d );
+				
+			} else {
+				//System.out.println("HasBall0");			
+				hasBall = true;
+				_intake.set ( 0.0d  );
+				firstBall = true;
+				intakeTimer.start();
+				
+				
+			}
+
+			if(hasBall){
+				//System.out.println("HasBall1");
+				if (timerReset==true){
+					//System.out.println("HasBall2");
+					if (intakeTimer.get() < .15 ){
+						_upFeed.set ( 0.3d  );
+						_lowFeed.set( 0.35d );
+						_intake.set ( 0.0d  );
+					}else{
+						
+						//System.out.println("HasBall3");
+						hasBall = false;
+						timerReset = false;
+					}
+				}else{
+					timerReset = true;
+					
+					intakeTimer.reset();
+					//System.out.println("reset");
+				}
+
+			}
+
+		}
+
+
+
+
+
 }

@@ -44,10 +44,37 @@ public class Robot extends TimedRobot {
     }
 
     public static AutoModes mode;
+    private Timer pathTimer = new Timer();
 
     public static AutoModes getAutoModes(){
       return mode;
     }
+
+    private enum galaticSearch{
+     
+      DETERMINECOLOR, // Used to determine path color
+
+       DETERMINEPATH, // Used to determine path letter
+
+        REDPATH_A_BALL2, // Turn and go to ball 2
+         REDPATH_A_BALL3, // Turn and go to ball 3
+          REDPATH_A_END, // Drive to finish
+        // All others do same for respective values
+        BLUEPATH_A_BALL2,
+          BLUEPATH_A_BALL3,
+           BLUEPATH_A_END,
+
+        REDPATH_B_BALL2,
+          REDPATH_B_BALL3,
+            REDPATH_B_END,
+
+        BLUEPATH_B_BALL2,
+          BLUEPATH_B_BALL3,
+            BLUEPATH_B_END,
+
+    }
+
+    private galaticSearch galaticMode = galaticSearch.DETERMINECOLOR;
 
     @Override
     public void robotInit() {
@@ -58,6 +85,7 @@ public class Robot extends TimedRobot {
       _drive = new WestCoastDrive( autonTimer, DRIVEJOY );
       liftLeveler = new Lift_Leveler(driverStation, MINIPJOY_2, DRIVEJOY);
       photonVision = new PhotonVision(_drive);
+      
     }
 
     @Override
@@ -67,11 +95,100 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+      galaticMode = galaticSearch.DETERMINECOLOR;
+      _drive.autonomousInit();
+      red = false;
+      blue = false;
+      ballHandler.galaticReset();
+      pathTimer.start();
+      pathTimer.reset();
+      timerReset = false;
+      
     }
+
+
+    // Distance Error 9192
+    boolean red = false;
+    boolean blue = false;
+    boolean timerReset = false;
+
+    boolean driveDone = false;
+
+    // -74491
 
     @Override
     public void autonomousPeriodic(){ 
-        photonVision.teleopPeriodic();
+
+      ballHandler.getball();
+       
+      switch(galaticMode){
+        case DETERMINECOLOR:
+
+        
+
+        if(!blue){
+          if(_drive.getDistance() <= -67628){
+              if(!timerReset){
+                timerReset = true;
+                pathTimer.reset();
+              }
+                if(ballHandler.firstBall){
+                red = true;
+                System.out.println("RED");
+                galaticMode = galaticSearch.DETERMINEPATH;
+              }else if( pathTimer.get() > 1 && !ballHandler.firstBall){
+                System.out.println("BLUE");
+                blue = true;
+              }
+            }else{
+              _drive.arcadeDrive(0.45, _drive.anglePID.calculate(_drive.getAngle()));
+            }
+        
+      }else{
+          if(_drive.getDistance() > -160503 && !ballHandler.firstBall){
+            
+            _drive.arcadeDrive(0.45, _drive.anglePID.calculate(_drive.getAngle()));
+          }else{
+            galaticMode = galaticSearch.DETERMINEPATH;
+          }
+        }
+      
+
+          break;
+        case DETERMINEPATH:
+          _drive.arcadeDrive(0, 0);
+        if(red){
+          System.out.println("red");
+        }else if (blue){
+          System.out.println("blue");
+         } break;
+        case REDPATH_A_BALL2:
+          break;
+        case REDPATH_A_BALL3:
+         break;
+        case REDPATH_A_END:
+          break;
+        case BLUEPATH_A_BALL2:
+          break;
+        case BLUEPATH_A_BALL3:
+          break;
+        case BLUEPATH_A_END:
+          break;
+        case REDPATH_B_BALL2:
+          break;
+        case REDPATH_B_BALL3:
+         break;
+        case REDPATH_B_END:
+          break;
+        case BLUEPATH_B_BALL2:
+          break;
+        case BLUEPATH_B_BALL3:
+          break;
+        case BLUEPATH_B_END:
+          break;
+        
+      }
+
     }
 
     @Override
@@ -117,26 +234,21 @@ public class Robot extends TimedRobot {
     }
 
     public void testInit(){
-
-        mode = AutoModes.SHOOT;
-        limeLight.lightOn();
-        limeLight.realClose();
-        _drive.shootingChallengeInit();
-        shooter.shootingChallengeInit();
-        shotTimer.reset();
+      _drive.resetRightMotor();
+       
     }
 
     private Timer shotTimer = new Timer();
 
     public void testPeriodic(){
 
-      //System.out.println(mode);
+      /*//System.out.println(mode);
 
-      _drive.printRightEncoder();
+      //_drive.printRightEncoder();
 
       _drive.shootingChallenge();
-      shooter.shootingChallenge(shotTimer);
-      ballHandler.shootingChallenge(shooter.firstShoot, shotTimer);
+      //shooter.shootingChallenge(shotTimer);
+     // ballHandler.shootingChallenge(shooter.firstShoot, shotTimer);
 
       switch(Robot.getAutoModes()){
 
@@ -154,7 +266,9 @@ public class Robot extends TimedRobot {
         limeLight.limePeriodic();
         break;
 
-      }
+      }*/
+
+     System.out.println(_drive.getDistance());
 
     }
 

@@ -28,8 +28,7 @@ class WestCoastDrive {
     // By seconds
     //private final Timer autonTimer;
 
-    private final ADXRS450_Gyro gyro                  = new ADXRS450_Gyro( );
-    private final PIDController anglePID              = new PIDController(kP, kI, kD);
+    public final PIDController anglePID              = new PIDController(kP, kI, kD);
     private final WPI_TalonFX _rghtMain               = new WPI_TalonFX(RobotMap._rghtMain);
     private final WPI_TalonFX _rghtFol1               = new WPI_TalonFX(RobotMap._rghtFol1);
     private final WPI_TalonFX _leftMain               = new WPI_TalonFX(RobotMap._leftMain);
@@ -51,14 +50,14 @@ class WestCoastDrive {
 
 
         this.driveJoy = driveJoy;
-        _rghtMain.setNeutralMode(NeutralMode.Brake);
-        _leftMain.setNeutralMode(NeutralMode.Brake);
-        _rghtFol1.setNeutralMode(NeutralMode.Brake);
-        _leftFol1.setNeutralMode(NeutralMode.Brake);
 
         //this.autonTimer = autonTimer;
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
+        _rghtMain.setSafetyEnabled(false);
+        _rghtFol1.setSafetyEnabled(false);
+        _leftMain.setSafetyEnabled(false);
+        _leftFol1.setSafetyEnabled(false);
     
         _rghtMain.setInverted( false  );
         _leftMain.setInverted( false );
@@ -67,16 +66,12 @@ class WestCoastDrive {
         anglePID.setTolerance( 1.0d );
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
 
-        gyro.calibrate();
-     }
-
-     public AHRS getNavX(){
-         return navX;
      }
 
      public void resetRightMotor(){
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
      }
+
 
      public int getRightEncoderReading(){
          return _rghtMain.getSelectedSensorPosition();
@@ -85,8 +80,7 @@ class WestCoastDrive {
 
     public void autonomousInit() {
         _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
-        _rghtMain.setNeutralMode(NeutralMode.Brake);
-        _leftMain.setNeutralMode(NeutralMode.Brake);
+        
         _rghtFol1.setNeutralMode(NeutralMode.Brake);
         _leftFol1.setNeutralMode(NeutralMode.Brake);
         navX.reset();
@@ -115,6 +109,8 @@ class WestCoastDrive {
     }
     public void teleopInit() {
         navX.zeroYaw();
+        _rghtMain.setNeutralMode(NeutralMode.Brake);
+        _leftMain.setNeutralMode(NeutralMode.Brake);
     }
     public void teleopPeriodic() {
 
@@ -192,41 +188,18 @@ class WestCoastDrive {
     
 
     public void testInit(){
-        tempTimer.reset();
-        tempTimer.start();
-        anglePID.reset();
-        navX.reset();
-        anglePID.setSetpoint(0.0);
-        /* A list of TalonFX's that are to be used as instruments */
-        ArrayList<TalonFX> _instruments = new ArrayList<TalonFX>();
-      
-        /* Initialize the TalonFX's to be used */
-        for (int i = 0; i < _fxes.length; ++i) {
-            _instruments.add(_fxes[i]);
-        }
-        /* Create the orchestra with the TalonFX instruments */
-        ArrayList<TalonFX> rightMain = new ArrayList<>();
-        rightMain.add(_rghtMain);
-        _rightMainOrc = new Orchestra(rightMain);
+        System.out.println(getDistance());
 
-        ArrayList<TalonFX> rightFoll = new ArrayList<>();
-        rightFoll.add(_rghtFol1);
-        _rightFollowOrc = new Orchestra(rightFoll);
-
-        ArrayList<TalonFX> leftMain = new ArrayList<>();
-        leftMain.add(_leftMain);
-        _leftMainOrc = new Orchestra(leftMain);
-
-        ArrayList<TalonFX> leftFollow = new ArrayList<>();
-        leftFollow.add(_leftFol1);
-        _leftFollowOrc = new Orchestra(leftFollow);
-
-        _rightMainOrc.loadMusic("DukeTheme.chrp");
-        _rightFollowOrc.loadMusic("DukeTheme.chrp");
-        _leftMainOrc.loadMusic("DukeTheme.chrp");
-        _leftFollowOrc.loadMusic("DukeTheme.chrp");
     }
 
+
+    public double getAngle(){
+        return navX.getAngle();
+    }
+
+    public int getDistance(){
+        return _rghtMain.getSelectedSensorPosition();
+    }
 
 
     public void testing(){
@@ -251,56 +224,30 @@ class WestCoastDrive {
         }*/
     }
 
-    public void printRightEncoder(){
-        System.out.println(_rghtMain.getSelectedSensorPosition());
-    }
-
-    public void shootingChallengeInit(){
-        _rghtMain.getSensorCollection().setIntegratedSensorPosition(0.0, 0);
-        _rghtMain.setNeutralMode(NeutralMode.Brake);
-        _leftMain.setNeutralMode(NeutralMode.Brake);
-        _rghtFol1.follow(_rghtMain);
-        _leftFol1.follow(_leftFol1);
-        //_rghtFol1.setNeutralMode(NeutralMode.Brake);
-        //_leftFol1.setNeutralMode(NeutralMode.Brake);
-    }
-  
-
     public void shootingChallenge(){
 
         switch(Robot.getAutoModes()){
 
-
-            case INDEX:
-            arcadeDrive(0.0, 0.0);
-            resetRightMotor();
-            break;
-            case SHOOT:
-            arcadeDrive(0.0, 0.0);
-            resetRightMotor();
-            break;
-
             case FORWARD:
-                if(_rghtMain.getSelectedSensorPosition() >= -75000){
+                if(_rghtMain.getSelectedSensorPosition() >= -126995){
                     arcadeDrive(0.56, rotRate);
-                    System.out.println(_rghtMain.getSelectedSensorPosition());
-                    SmartDashboard.putString("Driving: ", "Driving");
-                }else{
-                    SmartDashboard.putString("Driving: ", "DEAD!");
-                    arcadeDrive(0.0, 0.0);
-                    resetRightMotor();
-                    Robot.mode = Robot.AutoModes.INDEX;
-                }
-                break;
-            case BACKWARD:
-                if(_rghtMain.getSelectedSensorPosition() <= 75000){
-                    arcadeDrive(-0.56, rotRate);
                     SmartDashboard.putString("Driving: ", "Driving");
                 }else{
                     SmartDashboard.putString("Driving: ", "DEAD!");
                     arcadeDrive(0.0, 0.0);
                     resetRightMotor();
                     Robot.mode = Robot.AutoModes.SHOOT;
+                }
+                break;
+            case BACKWARD:
+                if(_rghtMain.getSelectedSensorPosition() <= 126995){
+                    arcadeDrive(-0.56, rotRate);
+                    SmartDashboard.putString("Driving: ", "Driving");
+                }else{
+                    SmartDashboard.putString("Driving: ", "DEAD!");
+                    arcadeDrive(0.0, 0.0);
+                    resetRightMotor();
+                    Robot.mode = Robot.AutoModes.INDEX;
                 }
                 break;
 
