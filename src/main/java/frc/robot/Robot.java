@@ -103,6 +103,7 @@ public class Robot extends TimedRobot {
       pathTimer.start();
       pathTimer.reset();
       timerReset = false;
+      hasReset = false;
       
     }
 
@@ -113,12 +114,31 @@ public class Robot extends TimedRobot {
     boolean timerReset = false;
 
     boolean driveDone = false;
+    boolean driveForward = false;
+    boolean hasReset = false;
+
+    private boolean driveToDistance(double driveDistance){
+      if(!hasReset){
+        _drive.resetRightMotor();
+        _drive.anglePID.setSetpoint(0);
+        _drive.navX.reset();
+        hasReset = true;
+      }else{
+        if(_drive.getDistance() > driveDistance){
+          _drive.arcadeDrive(.45, _drive.anglePID.calculate(_drive.navX.getAngle()));
+        }else{
+          _drive.arcadeDrive(0, 0);
+          return true;
+        }
+      }
+      return false;
+    }
 
     // -74491
 
     @Override
     public void autonomousPeriodic(){ 
-
+      photonVision.updatePhoton();
       ballHandler.getball();
        
       switch(galaticMode){
@@ -156,31 +176,63 @@ public class Robot extends TimedRobot {
 
           break;
         case DETERMINEPATH:
+        photonVision.updatePhoton();
           _drive.arcadeDrive(0, 0);
         if(red){
-          System.out.println("red");
+          if(photonVision.hasTarget){
+            System.out.println("Red Path B");
+            galaticMode = galaticSearch.REDPATH_B_BALL2;
+          }else{
+            System.out.println("Red Path A");
+            galaticMode = galaticSearch.REDPATH_A_BALL2;
+            _drive.anglePID.reset();
+          }
         }else if (blue){
-          System.out.println("blue");
+          if(photonVision.hasTarget){
+            System.out.println("Blue Path B");
+            galaticMode = galaticSearch.BLUEPATH_B_BALL2;
+          }else{
+            System.out.println("Blue Path A");
+            galaticMode = galaticSearch.BLUEPATH_A_BALL2;
+          }
          } break;
         case REDPATH_A_BALL2:
+         if(driveForward){
+          ballHandler.getball();
+          if(driveToDistance(-63940)){
+            galaticMode = galaticSearch.REDPATH_A_BALL3;
+          }
+
+         }else{
+          if(_drive.driveAngle(30, 0, 2)){
+            driveForward = true;
+          }
+        }
+
+
+        System.out.println(_drive.getAngle());
           break;
         case REDPATH_A_BALL3:
+        System.out.println("REDPATH_A_BALL3");
          break;
         case REDPATH_A_END:
           break;
         case BLUEPATH_A_BALL2:
+        System.out.println("BLUE PATH A BALL 2");
           break;
         case BLUEPATH_A_BALL3:
           break;
         case BLUEPATH_A_END:
           break;
         case REDPATH_B_BALL2:
+        System.out.println("RED PATH B BALL 2");
           break;
         case REDPATH_B_BALL3:
          break;
         case REDPATH_B_END:
           break;
         case BLUEPATH_B_BALL2:
+        System.out.println("BLUE PATH B BALL 2");
           break;
         case BLUEPATH_B_BALL3:
           break;
@@ -241,32 +293,6 @@ public class Robot extends TimedRobot {
     private Timer shotTimer = new Timer();
 
     public void testPeriodic(){
-
-      /*//System.out.println(mode);
-
-      //_drive.printRightEncoder();
-
-      _drive.shootingChallenge();
-      //shooter.shootingChallenge(shotTimer);
-     // ballHandler.shootingChallenge(shooter.firstShoot, shotTimer);
-
-      switch(Robot.getAutoModes()){
-
-        case INDEX:
-        if(MINIPJOY_1.getRawButton(1) && MINIPJOY_2.getRawButton(1) ){
-          Robot.mode = Robot.AutoModes.BACKWARD;
-        }
-        break;
-
-        case SHOOT:
-        limeLight.limePeriodic();
-        break;
-
-        case FORWARD:
-        limeLight.limePeriodic();
-        break;
-
-      }*/
 
      System.out.println(_drive.getDistance());
 

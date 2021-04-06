@@ -18,7 +18,7 @@ class PhotonVision {
     private double kI = 0.00005d;
     private double kD = 0.0d;
     private PIDController photonAngle = new PIDController(kP, kI, kD);
-    private boolean hasTarget = false;
+    public boolean hasTarget = false;
 
     public PhotonVision(WestCoastDrive drive){
 

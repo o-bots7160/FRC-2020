@@ -1,30 +1,25 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
-//import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot.AutoModes;
 
-import java.util.ArrayList;
+
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-//import com.ctre.phoenix.motorcontrol.can.BasePIDSetConfiguration;
-import com.ctre.phoenix.music.Orchestra;
 import com.kauailabs.navx.frc.AHRS;
 
 class WestCoastDrive {
-    private final double kP                            = 0.06d;
-    private final double kI                            = 0.0d;
+    private final double kP                            = 0.015d; // old 0.06
+    private final double kI                            = 0.00005d;
     private final double kD                            = 0.0d;
-    private AHRS navX;
+    public AHRS navX;
     // By seconds
     //private final Timer autonTimer;
 
@@ -51,7 +46,6 @@ class WestCoastDrive {
 
         this.driveJoy = driveJoy;
 
-        //this.autonTimer = autonTimer;
         _rghtFol1.follow( _rghtMain  );
         _leftFol1.follow( _leftMain  );
         _rghtMain.setSafetyEnabled(false);
@@ -85,6 +79,7 @@ class WestCoastDrive {
         _leftFol1.setNeutralMode(NeutralMode.Brake);
         navX.reset();
         anglePID.reset();
+        anglePID.setSetpoint(0);
     }
     public void autonomousPeriodic() {
 
@@ -116,47 +111,12 @@ class WestCoastDrive {
 
         SmartDashboard.putNumber("Gyro Reaing", navX.getAngle());
 
-        /* if(driveJoy.getRawButton(2)){
 
-            if(driveJoy.getRawButton(1)){
-                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                    InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                    arcadeDrive(driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * (InputMap.SPEED_Y - 0.15),
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z));
-                }
-            }else{
-                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                    arcadeDrive(driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z - 0.15);
-                }
-            }
-
-        }else{
-            if(driveJoy.getRawButton(1)){
-                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                    InputMap.DeadBand(0.25d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                    arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * (InputMap.SPEED_Y - 0.15),
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * (InputMap.SPEED_Z - 0.15));
-                }
-            }else{
-                if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                    arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
-                }
-            }
-            */
-           /* if(InputMap.DeadBand(0.2d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Y)) ||
-                InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
-                    arcadeDrive(-driveJoy.getRawAxis(InputMap.DRIVEJOY_Y) * InputMap.SPEED_Y,
-                    driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
-
-            */
                     if(InputMap.DeadBand(0.2d, driveJoy.getY()) ||
                     InputMap.DeadBand(0.35d, driveJoy.getRawAxis(InputMap.DRIVEJOY_Z))){
                         arcadeDrive(-driveJoy.getY() * InputMap.SPEED_Y,
                         driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
+                        System.out.println(driveJoy.getRawAxis(InputMap.DRIVEJOY_Z) * InputMap.SPEED_Z);
         }
     }
     
@@ -165,7 +125,7 @@ class WestCoastDrive {
      * This function accepts joystick input to move the robot.
      */
     public void arcadeDrive( final double y, final double x) {
-        //double filtered_input = filter.calculate( y );
+       
         mainDrive.arcadeDrive( y, x);
     }
     
@@ -181,11 +141,7 @@ class WestCoastDrive {
     }
 
     TalonFX [] _fxes = {_rghtMain, _rghtFol1, _leftMain, _leftFol1};
-    Orchestra _rightMainOrc;
-    Orchestra _rightFollowOrc;
-    Orchestra _leftMainOrc;
-    Orchestra _leftFollowOrc;
-    
+       
 
     public void testInit(){
         System.out.println(getDistance());
@@ -201,59 +157,22 @@ class WestCoastDrive {
         return _rghtMain.getSelectedSensorPosition();
     }
 
+    public boolean driveAngle(double angle, double driveSpeed, double tolerance){
+        anglePID.setSetpoint(angle);
+        arcadeDrive(driveSpeed, anglePID.calculate(navX.getAngle()));
+        if(navX.getAngle() < (angle + tolerance) && navX.getAngle() > (angle - tolerance)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
     public void testing(){
-        _rightMainOrc.play();
-        _rightFollowOrc.play();
-        _leftMainOrc.play();
-        _leftFollowOrc.play();
-
-        /*SmartDashboard.putNumber("Gyro Reading: ", navX.getAngle());
-        double rotRate = anglePID.calculate(Math.round(navX.getAngle()));
-
-        /*if(rotRate > 0.4){
-            rotRate = 0.4;
-        }else if(rotRate < -0.4){
-            rotRate = -0.4;
-        }*/
-
-        /*if(tempTimer.get() <= 6){
-            arcadeDrive(.45, rotRate);
-        }else{
-            arcadeDrive(0, 0);
-        }*/
+ 
     }
 
-    public void shootingChallenge(){
-
-        switch(Robot.getAutoModes()){
-
-            case FORWARD:
-                if(_rghtMain.getSelectedSensorPosition() >= -126995){
-                    arcadeDrive(0.56, rotRate);
-                    SmartDashboard.putString("Driving: ", "Driving");
-                }else{
-                    SmartDashboard.putString("Driving: ", "DEAD!");
-                    arcadeDrive(0.0, 0.0);
-                    resetRightMotor();
-                    Robot.mode = Robot.AutoModes.SHOOT;
-                }
-                break;
-            case BACKWARD:
-                if(_rghtMain.getSelectedSensorPosition() <= 126995){
-                    arcadeDrive(-0.56, rotRate);
-                    SmartDashboard.putString("Driving: ", "Driving");
-                }else{
-                    SmartDashboard.putString("Driving: ", "DEAD!");
-                    arcadeDrive(0.0, 0.0);
-                    resetRightMotor();
-                    Robot.mode = Robot.AutoModes.INDEX;
-                }
-                break;
-
-        }
-
-    }
+    
 
 
 }
