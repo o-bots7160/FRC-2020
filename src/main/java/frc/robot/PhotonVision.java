@@ -28,7 +28,7 @@ class PhotonVision {
         
     }
 
-    public void updatePhoton(){
+    public boolean updatePhoton(){
         currentResult = camera.getLatestResult();
         //camera.setDriverMode(true);
         camera.setPipelineIndex(0);
@@ -36,6 +36,15 @@ class PhotonVision {
         if(hasTarget){
             PhotonTrackedTarget currentTarg = currentResult.getBestTarget();
             x = currentTarg.getYaw();
+        }
+
+        if(Math.abs(x) > 5){
+            return false;
+        }else if(Math.abs(x) < 5){
+            return true;
+        }else{
+
+            return false;
         }
         
     }

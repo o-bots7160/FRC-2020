@@ -72,6 +72,8 @@ public class Robot extends TimedRobot {
           BLUEPATH_B_BALL3,
             BLUEPATH_B_END,
 
+        END
+
     }
 
     private galaticSearch galaticMode = galaticSearch.DETERMINECOLOR;
@@ -104,6 +106,8 @@ public class Robot extends TimedRobot {
       pathTimer.reset();
       timerReset = false;
       hasReset = false;
+      secondTimerStart = false;
+      secondTimer.reset();
       
     }
 
@@ -116,120 +120,274 @@ public class Robot extends TimedRobot {
     boolean driveDone = false;
     boolean driveForward = false;
     boolean hasReset = false;
+    boolean secondTimerStart = false;
+
+    Timer secondTimer = new Timer();
 
     private boolean driveToDistance(double driveDistance){
       if(!hasReset){
         _drive.resetRightMotor();
-        _drive.anglePID.setSetpoint(0);
+        
         _drive.navX.reset();
+        System.out.println("I have reset!!!!!!!!!!!!!!!");
+        secondTimer.reset();
+        secondTimer.start();
         hasReset = true;
       }else{
-        if(_drive.getDistance() > driveDistance){
-          _drive.arcadeDrive(.45, _drive.anglePID.calculate(_drive.navX.getAngle()));
-        }else{
-          _drive.arcadeDrive(0, 0);
-          return true;
+          if(secondTimer.get() > .5){
+            _drive.anglePID.setSetpoint(0);
+            if(_drive.getDistance() > driveDistance){
+              //System.out.println("I'm driving already!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+              _drive.arcadeDrive(.45, determinePathAngle);
+            }else{
+              _drive.arcadeDrive(0, 0);
+              return true;
+            }
         }
       }
       return false;
     }
 
     // -74491
+    double determinePathAngle = .092;
 
     @Override
     public void autonomousPeriodic(){ 
-      photonVision.updatePhoton();
-      ballHandler.getball();
-       
+      if(galaticMode != galaticSearch.END){
+        ballHandler.getball();
+      }
+      //-6436
+ 
       switch(galaticMode){
-        case DETERMINECOLOR:
-
-        
-
-        if(!blue){
-          if(_drive.getDistance() <= -67628){
-              if(!timerReset){
-                timerReset = true;
-                pathTimer.reset();
-              }
-                if(ballHandler.firstBall){
-                red = true;
-                System.out.println("RED");
-                galaticMode = galaticSearch.DETERMINEPATH;
-              }else if( pathTimer.get() > 1 && !ballHandler.firstBall){
-                System.out.println("BLUE");
-                blue = true;
-              }
-            }else{
-              _drive.arcadeDrive(0.45, _drive.anglePID.calculate(_drive.getAngle()));
-            }
-        
-      }else{
-          if(_drive.getDistance() > -160503 && !ballHandler.firstBall){
-            
-            _drive.arcadeDrive(0.45, _drive.anglePID.calculate(_drive.getAngle()));
-          }else{
-            galaticMode = galaticSearch.DETERMINEPATH;
-          }
-        }
-      
-
-          break;
-        case DETERMINEPATH:
+        case DETERMINECOLOR:   
         photonVision.updatePhoton();
-          _drive.arcadeDrive(0, 0);
-        if(red){
-          if(photonVision.hasTarget){
-            System.out.println("Red Path B");
-            galaticMode = galaticSearch.REDPATH_B_BALL2;
-          }else{
-            System.out.println("Red Path A");
-            galaticMode = galaticSearch.REDPATH_A_BALL2;
-            _drive.anglePID.reset();
-          }
-        }else if (blue){
-          if(photonVision.hasTarget){
-            System.out.println("Blue Path B");
-            galaticMode = galaticSearch.BLUEPATH_B_BALL2;
-          }else{
-            System.out.println("Blue Path A");
-            galaticMode = galaticSearch.BLUEPATH_A_BALL2;
-          }
-         } break;
+              if(!blue){
+                if(_drive.getDistance() <= -61192){
+                    if(!timerReset){
+                      timerReset = true;
+                      pathTimer.reset();
+                    }
+                      if(ballHandler.firstBall && pathTimer.get() > 1.25){
+                        red = true;
+                        System.out.println("RED");
+                        galaticMode = galaticSearch.DETERMINEPATH;
+                    }else if( pathTimer.get() > 1.25 && !ballHandler.firstBall){
+                      System.out.println("BLUE");
+                      blue = true;
+                      driveForward = false;
+                    }
+                  }else{
+                    double steerCommand = _drive.anglePID.calculate(_drive.navX.getAngle());
+                    if(steerCommand > .40){
+                        steerCommand = 0.40;
+                    }else if(steerCommand < -0.40){
+                        steerCommand = -0.40;
+                    }
+                    _drive.arcadeDrive(0.45, determinePathAngle);
+                  }
+              
+            }else{
+                if(_drive.getDistance() > -154067 && !ballHandler.firstBall){
+                  
+                  _drive.arcadeDrive(0.45, 0);
+                }else{
+                  galaticMode = galaticSearch.DETERMINEPATH;
+                }
+              }
+            
+
+                break;
+        case DETERMINEPATH:
+                _drive.arcadeDrive(0, 0);
+              if(red){
+                if(photonVision.updatePhoton()){
+                  galaticMode = galaticSearch.REDPATH_B_BALL2;
+                }else{
+                   _drive.anglePID.reset();
+                  _drive.resetRightMotor();
+                  _drive.navX.reset();
+                  galaticMode = galaticSearch.REDPATH_A_BALL2;
+                  }
+              }else if (blue){
+                if(photonVision.updatePhoton()){
+                  System.out.println("Blue Path B");
+                  galaticMode = galaticSearch.BLUEPATH_B_BALL2;
+                }else{
+                  System.out.println("Blue Path A");
+                  galaticMode = galaticSearch.BLUEPATH_A_BALL2;
+                }
+              } break;
         case REDPATH_A_BALL2:
-         if(driveForward){
-          ballHandler.getball();
-          if(driveToDistance(-63940)){
-            galaticMode = galaticSearch.REDPATH_A_BALL3;
-          }
+              
+                if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-63940)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.REDPATH_A_BALL3;
+                  hasReset = false;
+                }
 
-         }else{
-          if(_drive.driveAngle(30, 0, 2)){
-            driveForward = true;
-          }
-        }
-
-
-        System.out.println(_drive.getAngle());
-          break;
+              }else{
+                if(_drive.driveAngle(24.5, 0, 5)){
+                  driveForward = true;
+                }
+              }
+              System.out.println(driveForward);
+              System.out.println("REDPATH_A_BALL2 Angle: " + _drive.navX.getAngle());
+              break;
         case REDPATH_A_BALL3:
-        System.out.println("REDPATH_A_BALL3");
-         break;
+              System.out.println("REDPATH_A_BALL3");
+              if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-75603)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.REDPATH_A_END;
+                }
+
+              }else{
+                if(_drive.driveAngle(-76, 0, 5)){
+                  driveForward = true;
+                  hasReset = false;
+                  System.out.println("Going to move forward: " + driveForward);
+
+                }
+              }
+              System.out.println("Angle: " + _drive.navX.getAngle());
+              break;
         case REDPATH_A_END:
-          break;
+        //-127305
+              if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-127305)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.END;
+                }
+
+              }else{
+                if(_drive.driveAngle(58, 0, 5)){
+                  driveForward = true;
+                  hasReset = false;
+                  System.out.println("Going to move forward: " + driveForward);
+
+                }
+              }
+                break;
         case BLUEPATH_A_BALL2:
-        System.out.println("BLUE PATH A BALL 2");
-          break;
+              //System.out.println("BLUE PATH A BALL 2");
+              if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-83460)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.BLUEPATH_A_BALL3;
+                }
+
+              }else{
+                if(_drive.driveAngle(-58, 0, 5)){
+                  driveForward = true;
+                  hasReset = false;
+                  secondTimer.reset();
+                  _drive.resetRightMotor();
+                  System.out.println("Going to move forward: " + driveForward);
+
+                }
+              }
+              System.out.println("BLUEPATH_A_BALL2 Angle: " + _drive.getAngle());
+                break;
         case BLUEPATH_A_BALL3:
-          break;
+                System.out.println("BLUE PATH A BALL 3");
+                if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-124635)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.BLUEPATH_A_END;
+                }
+
+              }else{
+                if(_drive.driveAngle(67, 0, 5)){
+                  driveForward = true;
+                  hasReset = false;
+                  secondTimer.reset();
+                  _drive.resetRightMotor();
+                  System.out.println("Going to move forward: " + driveForward);
+
+                }
+              }
+                break;
         case BLUEPATH_A_END:
+        //Nothing needed here we just drive straight thru in ball three
+        galaticMode = galaticSearch.END;
           break;
         case REDPATH_B_BALL2:
-        System.out.println("RED PATH B BALL 2");
+        //System.out.println("RED PATH B BALL 2");
+        //-83357
+               if(driveForward){
+                ballHandler.getball();
+                if(driveToDistance(-70000)){
+                  System.out.println(_drive.getAngle());
+                  driveForward = false;
+                  galaticMode = galaticSearch.REDPATH_B_BALL3;
+                }
+
+              }else{
+                System.out.println("REDPATH_B_BALL2: " + _drive.getAngle());
+                if(_drive.driveAngle(36, 0, 2)){
+                  driveForward = true;
+                  hasReset = false;
+                  secondTimer.reset();
+                  _drive.resetRightMotor();
+                  System.out.println("Going to move forward: " + driveForward);
+
+                }
+              }
           break;
         case REDPATH_B_BALL3:
+        System.out.println("RED PATH B BALL 3");
+        //-60270
+        if(driveForward){
+          ballHandler.getball();
+          if(driveToDistance(-64270)){
+            System.out.println(_drive.getAngle());
+            driveForward = false;
+            galaticMode = galaticSearch.REDPATH_B_END;
+          }
+
+        }else{
+          if(_drive.driveAngle(-60, 0, 5)){
+            driveForward = true;
+            hasReset = false;
+            secondTimer.reset();
+            _drive.resetRightMotor();
+            System.out.println("Going to move forward: " + driveForward);
+
+          }
+        }
+
          break;
         case REDPATH_B_END:
+        //112062
+        if(driveForward){
+          ballHandler.getball();
+          if(driveToDistance(-111000)){
+            System.out.println(_drive.getAngle());
+            driveForward = false;
+            galaticMode = galaticSearch.END;
+          }
+
+        }else{
+          if(_drive.driveAngle(35, 0, 2)){
+            driveForward = true;
+            hasReset = false;
+            secondTimer.reset();
+            _drive.resetRightMotor();
+            System.out.println("REDPATH_B_END Going to move forward: " + driveForward);
+
+          }
+        }
           break;
         case BLUEPATH_B_BALL2:
         System.out.println("BLUE PATH B BALL 2");
@@ -238,6 +396,11 @@ public class Robot extends TimedRobot {
           break;
         case BLUEPATH_B_END:
           break;
+
+        case END:
+        _drive.arcadeDrive(0, 0);
+        ballHandler._intake.set(0);
+        break;
         
       }
 

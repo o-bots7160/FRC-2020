@@ -8,8 +8,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -17,8 +16,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 class WestCoastDrive {
     private final double kP                            = 0.015d; // old 0.06
-    private final double kI                            = 0.00005d;
-    private final double kD                            = 0.0d;
+    private final double kI                            = 0.005d;
+    private final double kD                            = 0.000000005d;
     public AHRS navX;
     // By seconds
     //private final Timer autonTimer;
@@ -159,9 +158,19 @@ class WestCoastDrive {
 
     public boolean driveAngle(double angle, double driveSpeed, double tolerance){
         anglePID.setSetpoint(angle);
-        arcadeDrive(driveSpeed, anglePID.calculate(navX.getAngle()));
-        if(navX.getAngle() < (angle + tolerance) && navX.getAngle() > (angle - tolerance)){
+
+        double steerCommand = anglePID.calculate(navX.getAngle());
+        if(steerCommand > .40){
+            steerCommand = 0.40;
+        }else if(steerCommand < -0.40){
+            steerCommand = -0.40;
+        }
+        //System.out.println("SteerCommand: " + steerCommand);
+        arcadeDrive(driveSpeed, steerCommand);
+
+        if((Math.abs(navX.getAngle()) <= (Math.abs(angle) + tolerance)) && (Math.abs(navX.getAngle()) >= (Math.abs(angle) - tolerance))){
             return true;
+
         }else{
             return false;
         }

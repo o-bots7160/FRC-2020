@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 	//------MotorControllers------//
 	private final CANSparkMax   _lowFeed = new CANSparkMax(   RobotMap._lowFeed, MotorType.kBrushless);
 	private final CANSparkMax   _upFeed  = new CANSparkMax(   RobotMap._upFeed,  MotorType.kBrushless);
-	private final WPI_VictorSPX _intake  = new WPI_VictorSPX( RobotMap._intake );
+	public final WPI_VictorSPX _intake  = new WPI_VictorSPX( RobotMap._intake );
 	//----------------------------//
 
 	//--------Ball Sensors--------//
@@ -85,6 +85,8 @@ import edu.wpi.first.wpilibj.Timer;
 	public void setCoastMode(){
 		_lowFeed.setIdleMode(IdleMode.kCoast);
 		_upFeed.setIdleMode(IdleMode.kCoast);
+		_lowFeed.setInverted(true);
+		_upFeed.setInverted(true);
 	}
 
 	public void autonomousInit(){
