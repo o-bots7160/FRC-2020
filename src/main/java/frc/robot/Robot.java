@@ -229,7 +229,7 @@ public class Robot extends TimedRobot {
                 }
 
               }else{
-                if(_drive.driveAngle(24.5, 0, 5)){
+                if(_drive.driveAngle(26.5, 0, 5)){
                   driveForward = true;
                 }
               }
@@ -247,7 +247,7 @@ public class Robot extends TimedRobot {
                 }
 
               }else{
-                if(_drive.driveAngle(-76, 0, 5)){
+                if(_drive.driveAngle(-74, 0, 5)){
                   driveForward = true;
                   hasReset = false;
                   System.out.println("Going to move forward: " + driveForward);
@@ -323,6 +323,7 @@ public class Robot extends TimedRobot {
         galaticMode = galaticSearch.END;
           break;
         case REDPATH_B_BALL2:
+        //galaticMode = galaticSearch.REDPATH_A_BALL2;
         //System.out.println("RED PATH B BALL 2");
         //-83357
                if(driveForward){
